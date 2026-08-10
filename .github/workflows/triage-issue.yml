@@ -68,7 +68,7 @@ jobs:
 
         if: github.event_name == 'issues'
 
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
 
         with:
 
