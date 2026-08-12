@@ -53,6 +53,23 @@ hcloud CES CreateAlarm --help
 # --condition.comparison_operator, --condition.count
 ```
 
+### `--condition.comparison_operator` Legal Values
+
+For metric alarms use **symbols** (NOT words like `gt`/`lt`):
+
+| Value | Meaning |
+|-------|---------|
+| `>` | Greater than |
+| `>=` | Greater than or equal |
+| `<` | Less than |
+| `<=` | Less than or equal |
+| `=` | Equal |
+| `!=` | Not equal |
+
+For event alarms: `cycle_decrease`, `cycle_increase`, `cycle_wave`.
+
+> **Trap**: Shell may interpret `>` and `<` as redirect operators. Always quote: `--condition.comparison_operator=">="` or use `--cli-jsonInput=<file>`.
+
 ## Troubleshooting
 
 | Error | Fix |

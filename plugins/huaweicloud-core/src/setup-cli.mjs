@@ -700,15 +700,23 @@ async function cmdDoctor() {
 
   // Skills
   const skillsOptions = [opencodeSkillsDir(), codexDesktopSkillsDir(), codeartsSkillsDir()];
-  let skillCount = 0, skillsDir = '';
+  let skillCount = 0, skillsDir = '', missingSkills = [];
   for (const dir of skillsOptions) {
     if (!existsSync(dir)) continue;
-    const count = readdirSync(dir, { withFileTypes: true })
-      .filter((d) => d.isDirectory() && d.name.startsWith('huawei')).length;
+    const entries = readdirSync(dir, { withFileTypes: true })
+      .filter((d) => d.isDirectory() && d.name.startsWith('huawei'));
+    const count = entries.length;
     if (count > skillCount) { skillCount = count; skillsDir = dir; }
+    for (const d of entries) {
+      if (!existsSync(join(dir, d.name, 'SKILL.md'))) missingSkills.push(d.name);
+    }
   }
   const skillsOk = skillCount >= 6;
-  check(`Skills installed (${skillCount})`, skillsOk, 'Run: npx huaweicloud-devkit-test install');
+  check(`Skills installed (${skillCount})`, skillsOk, 'Run: npx huaweicloud-devkit install');
+  if (missingSkills.length > 0) {
+    console.log(`  \x1b[33m[WARN]\x1b[0m ${missingSkills.length} skill(s) missing SKILL.md: ${missingSkills.join(', ')} — Run: npx huaweicloud-devkit install`);
+    warn++;
+  }
 
   console.log(`\nResults: ${pass} pass, ${warn} warn, ${fail} fail`);
 

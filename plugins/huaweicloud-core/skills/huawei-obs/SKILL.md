@@ -31,7 +31,7 @@ Domain expertise for Huawei Cloud Object Storage Service (OBS). Covers bucket/ob
 
 | Trap | Why |
 |------|-----|
-| Bucket name is global | All users share bucket namespace |
+| Bucket name is global | All users share bucket namespace. Always use a unique name: `{prefix}-{timestamp}` (e.g. `mybucket-20260810155048`) |
 | Three-layer permissions | IAM > Bucket Policy > ACL. Most restrictive wins |
 | Versioning is irreversible | Once enabled, cannot be disabled, only suspended |
 | OBS uses AK/SK directly | NOT IAM tokens. Auth errors mean check AK/SK validity |
@@ -42,7 +42,17 @@ Domain expertise for Huawei Cloud Object Storage Service (OBS). Covers bucket/ob
 
 ## OBS Credential Setup (Required Before First Use)
 
-KooCLI OBS uses a separate config file (`~/.obsutilconfig`), NOT `~/.hcloud/config.json`. Call `huaweicloud_setup_obs_config` to automatically sync credentials from the active hcloud profile. No manual AK/SK entry needed.
+KooCLI OBS uses a separate config file (`~/.obsutilconfig`), NOT `~/.hcloud/config.json`. All OBS commands fail with credential errors until this is configured.
+
+**In-session bootstrap (recommended)**: Call `huaweicloud_setup_obs_config` — it syncs AK/SK from the active hcloud profile automatically. No manual key entry needed. Run this once per session before any OBS command.
+
+**CLI fallback** (if MCP tools unavailable):
+
+```bash
+hcloud OBS config -e=<endpoint> -i=<AK> -k=<SK> -t=token
+```
+
+> `huaweicloud_setup_obs_config` should be called at the start of every OBS task — never assume credentials are pre-configured from a previous session.
 
 ## Common Workflows
 
@@ -82,7 +92,7 @@ Build → Create bucket → Upload → Set bucket ACL → Set object ACL → Con
 | Error | Root Cause -> Fix |
 |-------|------------------|
 | AccessDenied on bucket | IAM/bucket policy/ACL conflict -> Check all three layers |
-| BucketAlreadyExists | Name taken globally -> Choose different name |
+| BucketAlreadyExists | Name taken globally -> Generate unique name with timestamp suffix: `{prefix}-{yyyymmddHHMMSS}` |
 | NoSuchKey | Object doesn't exist or wrong region -> Verify key and region |
 | InvalidAccessKeyId | OBS uses AK/SK directly -> Verify AK/SK validity, OBS endpoint, OBS permissions |
 | EntityTooLarge | Single PUT limit 5GB -> Use multipart upload |

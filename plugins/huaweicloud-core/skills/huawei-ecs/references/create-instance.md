@@ -91,8 +91,21 @@ hcloud EIP AssociatePublicips --publicip_id=<eip-id> --publicip.associate_instan
 ```
 
 ## 8. Verify
-hcloud ECS ListServersDetails --cli-region=<region> --server_id=<instance-id>
-Expected: status=ACTIVE
+
+ECS creation is asynchronous. Wait times vary widely (20s to 3min). Status transitions: `BUILD` → `ACTIVE` (or `ERROR`). Never use fixed sleep — poll actively:
+
+```bash
+for i in $(seq 1 30); do
+  status=$(hcloud ECS ListServersDetails --cli-region=<region> --server_id=<instance-id> --cli-output=json | jq -r '.servers[0].status')
+  if [ "$status" = "ACTIVE" ]; then break; fi
+  if [ "$status" = "ERROR" ]; then echo "Creation failed"; exit 1; fi
+  sleep 10
+done
+```
+
+- Poll interval: 10 seconds
+- Maximum wait: 5 minutes (30 iterations)
+- After ACTIVE, confirm once more: `hcloud ECS ListServersDetails --cli-region=<region> --server_id=<instance-id>`
 
 ### Verify HTTP accessibility (if EIP bound)
 

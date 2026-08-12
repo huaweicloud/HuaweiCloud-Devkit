@@ -54,14 +54,34 @@ Key gotchas when creating:
 
 ### Add Public Access (ELB Provider Only)
 
+`BASIC` instances have no public IP. Use `PROFESSIONAL` + `elb` provider for public access (`lvs` is internal-only).
+
 ```bash
 hcloud APIG AddIngressEipV2 \
   --instance_id=<id> \
   --bandwidth_charging_mode=bandwidth \
-  --bandwidth_size=5
+  --bandwidth_size=<size>
 ```
 
-> `AddIngressEipV2` only works with `elb` provider. `AddEipV2` requires `lvs` provider. Bandwidth minimum is 5 Mbps.
+To use an existing EIP instead of creating a new one:
+
+```bash
+hcloud APIG AddIngressEipV2 \
+  --instance_id=<id> \
+  --eip_id=<existing-eip-id>
+```
+
+> `AddIngressEipV2` only works with `elb` provider. `AddEipV2` (without "Ingress") requires `lvs` provider. Bandwidth minimum is 5 Mbps.
+
+**Verification** — After binding, poll the instance to confirm EIP is active:
+
+```bash
+hcloud APIG ListInstancesV2 --cli-region=<region> --instance_id=<id> --cli-output=json | jq '.instances[0].eip_address'
+```
+
+Wait for `eip_address` to show a valid IP (may take up to 2 minutes). If `eip_address` is still `null` after 2 minutes, the EIP may not have been assigned.
+
+> **Trap**: `sl_domain` from `CreateApiGroupV2` is an **internal-only** domain (e.g., `*.apic.cn-north-4.huaweicloudapis.com`). It may resolve to internal IP only (NXDOMAIN from public internet). **For public access, always use the `eip_address` from the instance**, not the `sl_domain` or trigger `invoke_url`.
 
 ## API Group
 
