@@ -33,7 +33,6 @@ Domain expertise for Huawei Cloud Sandbox (DevStation) instances and workspace t
 |------|---------|
 | `huaweicloud_sandbox_connect` | Connect to sandbox (one user one instance, reuses existing if available) |
 | `huaweicloud_sandbox_credentials` | Inject temporary AK/SK into a running sandbox |
-| `huaweicloud_sandbox_release` | Shut down and delete a sandbox (idempotent) |
 
 ### Terminal Execution
 
@@ -52,7 +51,6 @@ Setup is a **plugin-side preflight** — the developer should be asked a questio
 4. **Connect**: `huaweicloud_sandbox_connect` — returns `session_id`, `dev_stage_id`, `connection_id`, `connection_address`
 5. **Inject credentials** (optional): `huaweicloud_sandbox_credentials` — enables cloud API access from sandbox
 6. **Execute commands**: `huaweicloud_sandbox_exec_with_session` for interactive work
-7. **Release**: `huaweicloud_sandbox_release` — cleans up sandbox and session
 
 ## Critical Warnings
 
