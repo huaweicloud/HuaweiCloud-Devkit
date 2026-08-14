@@ -36,7 +36,8 @@ Do not rely on training data for facts. Huawei Cloud services, pricing, quotas, 
 | observability | Observability Routing | monitor, alarm, log, audit, trace, Cloud Eye | Handoff to huawei-cloud-eye or huawei-cts |
 | billing | Billing Routing | cost, bill, budget, spending, invoice | Handoff to huawei-billing |
 | iam | IAM Routing | permission, policy, role, user, group, AK/SK | Handoff to huawei-iam |
-| deployment | Deployment Routing | deploy, CI/CD, pipeline, release | Handoff to huawei-deployment |
+| deployment | Deployment Routing | deploy, CI/CD, pipeline, release | CI/CD pipeline -> huawei-deployment; deploy a web app or a GitHub repo (no CI/CD target) -> huawei-sandbox |
+| sandbox | Sandbox Routing | sandbox, DevStation, workspace, terminal, preview, temporary runtime | Handoff to huawei-sandbox |
 | cli | CLI and Auth Routing | install hcloud, configure KooCLI, AK/SK setup | Handoff to huaweicloud-cli-and-auth |
 | safety | Safety Routing | is this safe, approve command, risk review | Handoff to huaweicloud-safety |
 | troubleshoot | Troubleshooting Routing | error, bug, failed, AccessDenied, quota | Handoff to huaweicloud-troubleshooting |
@@ -67,6 +68,7 @@ Do not rely on training data for facts. Huawei Cloud services, pricing, quotas, 
 | Audit trails | CTS | huawei-cts |
 | Backup / disaster recovery | CBR | huawei-cbr |
 | CI/CD pipeline | CloudDeploy | huawei-deployment |
+| Temporary runtime / web app preview | Sandbox (DevStation) | huawei-sandbox |
 | Getting started | Account setup | huaweicloud-cli-and-auth |
 
 ## Capability Sources

@@ -132,7 +132,7 @@ ssh -o StrictHostKeyChecking=accept-new -i <key> root@<eip> 'dnf install -y ngin
 | Cannot SSH | SG missing port 22 or no EIP -> Add ingress rule / Bind EIP |
 | Flavor unavailable | Region limitation -> ListFlavors in target region |
 | Insufficient resources | Stock depleted -> Change flavor or AZ |
-| AuthFailure | Expired AK/SK -> hcloud configure init |
+| AuthFailure | Expired AK/SK -> re-run `npx huaweicloud-devkit auth init` |
 | APIGW.0802 / region permission | IAM user has no access to this region -> IAM console → User → Permissions → add region, or switch to another region |
 | Cannot SSH (port 22 open) | SCP policy may be blocking SSH. Check `SYS.0403` errors in command output -> Use cloud-init/user_data for initial setup instead. See `references/create-instance.md` §Bootstrap |
 

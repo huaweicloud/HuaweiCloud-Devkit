@@ -60,7 +60,8 @@ Agent processes find executables through `PATH`. If OpenCode/Codex cannot find `
 **NEVER let AK/SK enter shell history. This is the #1 credential leak vector.**
 
 - Create AK/SK in the Huawei Cloud console under `My Credentials -> Access Keys`.
-- **Interactive** (preferred, SAFE): `hcloud configure init` — prompts for AK/SK via terminal input. Values do NOT enter shell history.
+- **Unified credentials** (preferred): `npx huaweicloud-devkit auth init`. This is the DevKit's primary auth path; `hcloud configure init` only covers KooCLI.
+- **KooCLI only, interactive** (SAFE): `hcloud configure init` — prompts for AK/SK via terminal input. Values do NOT enter shell history.
 - **Non-interactive** (DANGEROUS — AK/SK in shell history): `hcloud configure set --cli-access-key=<AK> --cli-secret-key=<SK> --cli-region=<region>`. Only use in ephemeral CI/CD shells. User must execute outside agent chat.
 - If MCP is available, use `huaweicloud_show_profile_redacted` to check status without ever seeing credentials.
 - Never paste AK/SK, passwords, tokens, or profile files into the agent conversation.

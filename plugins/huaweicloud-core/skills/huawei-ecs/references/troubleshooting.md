@@ -13,7 +13,7 @@
 | Cannot SSH | 安全组未开放22端口 或 未绑定EIP | 1) 添加入方向规则 tcp 22。2) `hcloud EIP BindPublicIp` |
 | Flavor unavailable | 区域不支持该规格 | `hcloud ECS ListFlavors --cli-region=<r>` 先查。不硬编码 s6/m6 等规格名 |
 | Insufficient resources | AZ 库存不足 | 换规格、换 AZ、或等待资源释放 |
-| AuthFailure | AK/SK 过期或无效 | `hcloud configure init` 重新配置 |
+| AuthFailure | AK/SK 过期或无效 | `npx huaweicloud-devkit auth init` 重新配置统一凭据 |
 
 ## 创建失败诊断流程
 

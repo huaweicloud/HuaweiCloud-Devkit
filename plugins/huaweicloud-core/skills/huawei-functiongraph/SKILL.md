@@ -95,7 +95,7 @@ See `references/deploy-workflow.md` for a step-by-step example with code templat
 | DeleteFunction with `:latest` | Strip `:latest` version suffix from URN |
 | Code too large | Inline limit 10KB — use `zip`/`obs` code type |
 | Cold start slow | Set reserved instances for critical functions |
-| Auth failure | Run `hcloud configure init` |
+| Auth failure | Run `npx huaweicloud-devkit auth init` |
 
 ## Security Considerations
 

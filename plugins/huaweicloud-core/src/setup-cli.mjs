@@ -857,7 +857,10 @@ async function cmdInstall() {
     console.log(`\nKooCLI (hcloud) detected.`);
   }
 
-  console.log(`\nAfter restart + hcloud setup, run: npx huaweicloud-devkit doctor`);
+  console.log(`\n\x1b[1m下一步：\x1b[0m`);
+  console.log(`  1. 配置统一凭据：npx huaweicloud-devkit auth init`);
+  console.log(`  2. 重启 ${appName} 会话（MCP 工具重启后生效）`);
+  console.log(`  3. 运行自检：npx huaweicloud-devkit doctor`);
 
   // Write install marker for doctor to detect
   const markerDir = target === 'codearts' ? codeartsPluginsDir()
@@ -1038,7 +1041,7 @@ async function cmdDoctor() {
     // Check auth
     const authCheck = spawnSync(`"${hcloudBin}" configure list`, [], { shell: true, windowsHide: true, stdio: 'pipe', timeout: 5000 });
     const hasAuth = authCheck.status === 0 && /access.?key/i.test(authCheck.stdout.toString());
-    check('hcloud credentials configured', hasAuth, 'Run: hcloud configure init');
+    check('hcloud credentials configured', hasAuth, 'Run: npx huaweicloud-devkit auth init');
   }
 
   // Skills
@@ -1260,9 +1263,24 @@ async function cmdInstallHcloud() {
       // Clean up zip
       rmSync(zipPath, { force: true });
 
-      // Add to PATH
+      // Add to user PATH (append + dedupe within the User scope only; never copy
+      // session/system entries into the user PATH, and never use setx PATH which
+      // overwrites the whole variable and truncates at 1024 chars).
       console.log('  Adding to user PATH...');
-      spawnSync('setx', ['PATH', `${process.env.PATH};${installDir}`], { stdio: 'inherit', windowsHide: true });
+      const pathPs = [
+        '$ErrorActionPreference = "Stop"',
+        `$target = '${installDir.replace(/'/g, "''")}'`,
+        '$cur = [Environment]::GetEnvironmentVariable("Path", "User")',
+        'if (-not $cur) { $cur = "" }',
+        '$parts = @($cur -split ";" | Where-Object { $_ -ne "" })',
+        'if ($parts -notcontains $target) {',
+        '  [Environment]::SetEnvironmentVariable("Path", (@($parts) + $target) -join ";", "User")',
+        '  Write-Output "  Added to user PATH (deduped): $target"',
+        '} else {',
+        '  Write-Output "  Already in user PATH: $target"',
+        '}',
+      ].join('; ');
+      spawnSync('powershell', ['-NoProfile', '-Command', pathPs], { stdio: 'inherit', windowsHide: true, timeout: 30000 });
 
       console.log(`\n\x1b[32mInstall complete.\x1b[0m`);
       console.log(`  Verify: ${join(installDir, 'hcloud.exe')} version`);
@@ -1321,7 +1339,8 @@ async function cmdInstallHcloud() {
 
   console.log('\nAfter install, set HCLOUD_BIN if hcloud is not on PATH.');
   console.log('\n\x1b[1m\x1b[33m=== Configure credentials SAFELY ===\x1b[0m');
-  console.log('  Interactive (safe): hcloud configure init');
+  console.log('  Unified credentials (recommended): npx huaweicloud-devkit auth init');
+  console.log('  KooCLI only (alternative): hcloud configure init');
   console.log('  NEVER: hcloud configure set --cli-access-key=xxx  (AK/SK in shell history!)');
   console.log('\nThen run: npx huaweicloud-devkit doctor');
 }
@@ -1417,6 +1436,12 @@ function printAuthStatus(status) {
 async function cmdAuthInit() {
   console.log(BANNER);
   console.log('HuaweiCloud DevKit Unified Authentication Setup\n');
+  console.log('\x1b[1m获取 AK/SK（如果还没有）：\x1b[0m');
+  console.log('  1. 打开华为云"访问密钥"页签：');
+  console.log('     https://console.huaweicloud.com/iam/?region=cn-north-4#/mine/accessKey');
+  console.log('  2. 点击"新增访问密钥"，完成身份验证');
+  console.log('  3. 下载凭证文件（内含 AK 和 SK）。');
+  console.log('     注意：SK 只在创建密钥时显示一次，请妥善保存该文件。\n');
 
   let ak = process.env.HW_ACCESS_KEY || '';
   let sk = process.env.HW_SECRET_KEY || '';

@@ -19,11 +19,11 @@ version: 1
 ## First-Time Setup
 1. **Install KooCLI** using command above
 2. **Accept privacy policy** (first run only): KooCLI requires one-time privacy agreement. Run `hcloud version` to read the agreement, then respond `y` to accept. Do not pipe `echo "y" |` — you must review the terms first.
-3. **Configure credentials**: `hcloud configure init` (interactive, prompts for AK/SK/region safely)
+3. **Configure credentials (unified)**: `npx huaweicloud-devkit auth init` — prefer this over `hcloud configure init`, which only covers KooCLI.
 4. **Verify**: `hcloud configure list` to confirm profile, then `hcloud ECS ListServersDetails --cli-region=cn-north-4`
 5. For detailed auth guidance, see `huaweicloud-cli-and-auth` skill
 
-> **Security**: Never pass AK/SK as command-line arguments (`--ak=...`). Always use `hcloud configure init` (interactive) or `hcloud configure set` with cached profile to avoid secrets in shell history.
+> **Security**: Never pass AK/SK as command-line arguments (`--ak=...`). Always use `npx huaweicloud-devkit auth init` (unified, interactive, recommended) or `hcloud configure init` (KooCLI only) to avoid secrets in shell history.
 
 ### Non-Interactive Setup (Agent/CI Environments)
 

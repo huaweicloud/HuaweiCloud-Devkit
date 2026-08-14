@@ -564,7 +564,7 @@ async function setupObsConfigFromHcloud(profile) {
       ok: false,
       error: 'Failed to read hcloud profile.',
       detail: result.error || result.stderr || 'hcloud not installed or not configured',
-      nextStep: 'Run "hcloud configure init" outside agent chat, then retry.',
+      nextStep: 'Run "npx huaweicloud-devkit auth init" outside agent chat, then retry.',
     };
   }
 
@@ -590,7 +590,7 @@ async function setupObsConfigFromHcloud(profile) {
     return {
       ok: false,
       error: 'No credentials found in hcloud profile.',
-      nextStep: 'Run "hcloud configure init" outside agent chat to set up credentials first.',
+      nextStep: 'Run "npx huaweicloud-devkit auth init" outside agent chat to set up credentials first.',
     };
   }
 
@@ -710,6 +710,7 @@ function serviceCatalog(intent = '') {
     { keywords: ['cts', 'audit', 'trace', 'tracker'], skills: ['huawei-cts'], services: ['CTS'] },
     { keywords: ['cbr', 'backup', 'restore', 'vault', 'snapshot'], skills: ['huawei-cbr'], services: ['CBR'] },
     { keywords: ['deployment', 'deploy', 'ci/cd', 'pipeline', 'release'], skills: ['huawei-deployment'], services: ['CloudDeploy'] },
+    { keywords: ['sandbox', 'devstation', 'workspace', 'terminal', 'preview', 'hwlink'], skills: ['huawei-sandbox'], services: ['Sandbox', 'DevStation'] },
     { keywords: ['dds', 'dcs', 'mongodb', 'redis', 'memcached', 'cache', 'document db'], skills: ['huawei-dds-dcs'], services: ['DDS', 'DCS'] },
 ];
   const matched = [];

@@ -50,7 +50,7 @@ Use evidence before fixes. Do not guess service behavior when request IDs, regio
 
 | Error | Likely Cause | Fix |
 |-------|-------------|-----|
-| AuthFailure / 401 | AK/SK invalid or expired | Regenerate AK/SK, re-run `hcloud configure init` |
+| AuthFailure / 401 | AK/SK invalid or expired | Regenerate AK/SK, re-run `npx huaweicloud-devkit auth init` |
 | AccessDenied / 403 | IAM permission missing | Check `huawei-iam` skill, add required policy action |
 | NoSuchKey / 404 | Resource not found | Verify resource ID, region, and project_id |
 | QuotaExceeded | Account limit reached | Request quota increase in console |
