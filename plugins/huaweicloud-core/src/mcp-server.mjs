@@ -1,6 +1,17 @@
 #!/usr/bin/env node
 import { stdin, stdout } from 'node:process';
+import { rmSync, existsSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { TOOL_DEFINITIONS, callTool } from './tools.mjs';
+
+// The MCP server is now loaded by a live agent session. Clear the install marker
+// in this plugin dir so `doctor` no longer reports "restart needed".
+try {
+  const pluginDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+  const marker = resolve(pluginDir, '.installed');
+  if (existsSync(marker)) rmSync(marker, { force: true });
+} catch {}
 
 let buffer = Buffer.alloc(0);
 let useContentLengthFraming = true;

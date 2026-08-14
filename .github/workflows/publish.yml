@@ -20,6 +20,11 @@ jobs:
         with:
           node-version: 20
 
+      - name: Sync plugin manifest versions and validate
+        run: |
+          node ./scripts/sync-version.mjs
+          npm run validate
+
       - name: Tag and create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}

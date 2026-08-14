@@ -1,6 +1,23 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { homedir } from 'node:os';
+
+// Verify a credential file ended up with 0600. On Windows-mounted drives inside WSL
+// (drvfs/9p) chmod is silently ignored, so the file can be world-readable (0777).
+// Native Windows has no POSIX modes (statSync always reports 0666), so skip the check there.
+function ensurePrivateMode(path) {
+  if (process.platform === 'win32') return;
+  try { chmodSync(path, 0o600); } catch {}
+  try {
+    const mode = statSync(path).mode & 0o777;
+    if (mode !== 0o600) {
+      console.warn(`\x1b[33m[WARN]\x1b[0m Could not set 0600 on ${path} (current mode ${mode.toString(8)}). Credentials may be readable by other users.`);
+      console.warn(`\x1b[33m       If running under WSL, move the credential home to the Linux filesystem:\x1b[0m`);
+      console.warn(`\x1b[33m         export HUAWEICLOUD_HOME=$HOME  (then re-run auth init)\x1b[0m`);
+      console.warn(`\x1b[33m       Or skip file storage entirely with HW_ACCESS_KEY/HW_SECRET_KEY environment variables.\x1b[0m`);
+    }
+  } catch {}
+}
 
 function baseHome() {
   return process.env.HUAWEICLOUD_HOME || homedir();
@@ -34,6 +51,7 @@ export function writeGlobalCredentials(credentials = {}) {
     region: String(credentials.region || ''),
   };
   writeFileSync(path, JSON.stringify(payload, null, 2), { encoding: 'utf8', mode: 0o600 });
+  ensurePrivateMode(path);
   return path;
 }
 
@@ -41,13 +59,16 @@ export function writeObsConfig(credentials = {}) {
   const region = String(credentials.region || '');
   const ak = String(credentials.ak || '');
   const sk = String(credentials.sk || '');
+  const securityToken = String(credentials.securityToken || '');
   if (!region || !ak || !sk) {
     throw new Error('region, ak, and sk are required to write OBS config');
   }
   const path = obsConfigPath();
   const endpoint = credentials.endpoint || `https://obs.${region}.myhuaweicloud.com`;
-  const content = `[default]\r\nendpoint=${endpoint}\r\nak=${ak}\r\nsk=${sk}\r\n`;
+  // Flat key=value format (no [default] section) as written by KooCLI 7.x `hcloud OBS config`.
+  const content = `endpoint=${endpoint}\nak=${ak}\nsk=${sk}${securityToken ? `\ntoken=${securityToken}` : ''}\n`;
   writeFileSync(path, content, { encoding: 'utf8', mode: 0o600 });
+  ensurePrivateMode(path);
   return { path, endpoint };
 }
 

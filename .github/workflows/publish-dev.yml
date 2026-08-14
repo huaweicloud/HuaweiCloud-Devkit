@@ -31,8 +31,13 @@ jobs:
         run: |
           LATEST=$(npm view huaweicloud-devkit dist-tags.latest 2>/dev/null || echo 0.0.0)
           BASE=$(node -e "const [a,b,c]=process.argv[1].split('.').map(Number); process.stdout.write(a+'.'+b+'.'+(c+1))" "$LATEST")
-          echo "latest stable: ${LATEST} -> dev base: ${BASE}"
-          npm version "${BASE}" --no-git-tag-version
+          CUR=$(node -p "require('./package.json').version")
+          CUR_BASE=$(node -e "console.log(process.argv[1].split('-')[0])" "$CUR")
+          NEED_BASE=$(node -e "const [a,b,c]=process.argv[2].split('.').map(Number); const [x,y,z]=process.argv[1].split('.').map(Number); process.stdout.write(x*1e6+y*1e3+z < a*1e6+b*1e3+c ? 'yes' : 'no')" "$CUR_BASE" "$BASE")
+          echo "latest stable: ${LATEST} -> dev base: ${BASE} (current: ${CUR})"
+          if [ "${NEED_BASE}" = "yes" ]; then
+            npm version "${BASE}" --no-git-tag-version
+          fi
           npm version prerelease --preid=dev --no-git-tag-version
           echo "dev version: $(node -p "require('./package.json').version")"
 

@@ -1445,22 +1445,21 @@ async function cmdAuthInit() {
 
 
   const vaultPath = writeGlobalCredentials({ ak, sk, securityToken, region });
-  console.log(`\nCredentials stored: ${vaultPath}`);
 
   try {
-    const obs = writeObsConfig({ ak, sk, securityToken, region });
-    console.log(`OBS config synced: ${obs.path} (${obs.endpoint})`);
+    writeObsConfig({ ak, sk, securityToken, region });
   } catch (error) {
     console.log(`OBS config sync failed: ${error.message}`);
   }
 
   if (findHcloudBin()) {
     const result = configureHcloud({ ak, sk, region });
-    console.log(result.ok ? 'KooCLI profile updated.' : `KooCLI update failed: ${result.error || result.code}`);
+    if (!result.ok) console.log(`KooCLI update failed: ${result.error || result.code}`);
   } else {
     console.log('KooCLI not found. Run "npx huaweicloud-devkit install-hcloud" and then "auth sync".');
   }
 
+  console.log('\nCredentials synchronized.');
   console.log('\nNext steps:');
   console.log('  npx huaweicloud-devkit install --target all');
   console.log('  Restart your agent sessions.');
@@ -1480,12 +1479,10 @@ async function cmdAuthSync() {
 
   const result = syncAuth(target);
   if (result.ok) {
-    console.log(`OBS config synced: ${result.obs.path} (${result.obs.endpoint})`);
+    console.log('Credentials synchronized.');
   } else {
     console.error(result.error);
   }
-  console.log('Agent MCP registration:');
-  printAuthAgents(result.agents);
 }
 
 async function cmdAuthStatus() {

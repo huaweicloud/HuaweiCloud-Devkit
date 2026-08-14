@@ -614,7 +614,8 @@ async function setupObsConfigFromHcloud(profile) {
   }
 
   const endpoint = `https://obs.${region}.myhuaweicloud.com`;
-  const configContent = `[default]\r\nendpoint=${endpoint}\r\nak=${accessKeyId}\r\nsk=${secretAccessKey}\r\n`;
+  // Flat key=value format (no [default] section) as written by KooCLI 7.x `hcloud OBS config`.
+  const configContent = `endpoint=${endpoint}\nak=${accessKeyId}\nsk=${secretAccessKey}\n`;
 
   try {
     writeFileSync(obsConfigPath, configContent, { encoding: 'utf8', mode: 0o600 });
