@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0-next.2](https://github.com/huaweicloud/huaweicloud-devkit/compare/v1.0.2-next.2...v1.1.0-next.2) (2026-08-18)
+
+
+### Features
+
+* 合入 check-user 三档 403 等修复，发布 1.0.2-next.1 ([e198d60](https://github.com/huaweicloud/huaweicloud-devkit/commit/e198d6075f1cdb5bdec4a67e61666e413c777724))
+
 ## [1.0.2-next.2](https://github.com/huaweicloud/huaweicloud-devkit/compare/v1.0.2-next.1...v1.0.2-next.2) (2026-08-18)
 
 
