@@ -49,13 +49,17 @@ Domain expertise for Huawei Cloud Sandbox (DevStation) instances and workspace t
 
 Setup is a **plugin-side preflight** — the developer should be asked a question only once, when the agreement actually needs signing:
 
-1. **Check user** (transparent): `huaweicloud_sandbox_check_user` — verify `realnameVerified` and `agreementSigned`. Note: the tool may instead return an `HDKIT_NOT_AGREEMENT` error (e.g. `用户未签署最新版协议`) — treat that exactly the same as `agreementSigned=false`
-2. **Real-name verification** (only if `realnameVerified=false`): tell the developer once, "Huawei Cloud requires real-name verification before using the sandbox." and stop — do not retry `connect` in a loop
-3. **Sign agreement** (only if `agreementSigned=false`, or when step 1 returned an `HDKIT_NOT_AGREEMENT` error): **STOP and do NOT sign.** Tell the developer the sandbox requires signing the latest Huawei Cloud developer service agreement, then **wait for the developer to explicitly agree to sign** (e.g. the developer says "签署" / "sign it"). Only then call `huaweicloud_sandbox_sign_agreement`. **Never call `sign_agreement` on your own initiative** — the signing decision always belongs to the developer, and you must never sign a legal agreement on the developer's behalf without their explicit, unambiguous consent. Do not expose the underlying sandbox/DevBridge service as a separate entity the developer must understand or sign up for
-4. **Connect**: `huaweicloud_sandbox_connect` — returns `session_id`, `dev_stage_id`, `connection_id`, `connection_address`
-5. **Inject credentials** (optional): `huaweicloud_sandbox_credentials` — enables cloud API access from sandbox
-6. **Execute commands**: `huaweicloud_sandbox_exec_with_session` for interactive work
-7. **Expose the deployed app and return the public URL**: set up a public access link for the app port and give the URL to the developer as the final result (see "Expose the deployed app (public URL)") — this step uses an internal tunnel mechanism that must never be mentioned to the developer
+1. **Check user** (transparent): `huaweicloud_sandbox_check_user` — returns `realnameVerified`/`agreementSigned` (200) when all good, OR throws a 403 error with one of these codes:
+   - `HDKIT_NOT_REALNAME` — real-name missing only → go to step 2
+   - `HDKIT_NOT_AGREEMENT` — latest agreement not signed only → go to step 3
+   - `HDKIT_NOT_REALNAME_AND_AGREEMENT` — both missing → go to step 4
+2. **Real-name verification only** (`HDKIT_NOT_REALNAME`): tell the developer once, "Huawei Cloud requires real-name verification before using the sandbox — please complete it in the Huawei Cloud console (实名认证)." and stop — do not retry `connect` in a loop
+3. **Sign agreement only** (`HDKIT_NOT_AGREEMENT`): **STOP and do NOT sign on your own.** Ask the developer: "Huawei Cloud sandbox requires signing the latest developer service agreement. May I sign it for you?" Then **wait for the developer to explicitly agree** (e.g. "签署" / "确认" / "sign it"). Only after explicit consent call `huaweicloud_sandbox_sign_agreement` and return its result (`signed`/`signedCount`) to the developer. **Never sign a legal agreement on the developer's behalf without their explicit, unambiguous consent.** Do not expose the underlying sandbox/DevBridge service as a separate entity the developer must understand or sign up for
+4. **Both missing** (`HDKIT_NOT_REALNAME_AND_AGREEMENT`): present **both** requirements together in one message — the real-name verification steps (console, step 2) **and** the agreement-signing request (step 3, wait for explicit consent) — so the developer can complete both at once
+5. **Connect**: `huaweicloud_sandbox_connect` — returns `session_id`, `dev_stage_id`, `connection_id`, `connection_address`
+6. **Inject credentials** (optional): `huaweicloud_sandbox_credentials` — enables cloud API access from sandbox
+7. **Execute commands**: `huaweicloud_sandbox_exec_with_session` for interactive work
+8. **Expose the deployed app and return the public URL**: set up a public access link for the app port and give the URL to the developer as the final result (see "Expose the deployed app (public URL)") — this step uses an internal tunnel mechanism that must never be mentioned to the developer
 
 ## Expose the deployed app (public URL)
 
