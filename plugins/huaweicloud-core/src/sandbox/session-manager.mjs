@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -106,6 +106,12 @@ export function splitBase64Chunks(base64, chunkSize = UPLOAD_CHUNK_SIZE) {
 }
 
 export async function uploadFileWithSession(workspaceId, localPath, remotePath, username = 'root', timeoutMs = 30000) {
+  if (!existsSync(localPath)) {
+    throw new Error(`sandbox upload: local file not found: ${localPath}`);
+  }
+  if (!statSync(localPath).isFile()) {
+    throw new Error(`sandbox upload: path is not a regular file: ${localPath}`);
+  }
   const content = readFileSync(localPath);
   const base64 = content.toString('base64');
   const expectedMd5 = createHash('md5').update(content).digest('hex');
