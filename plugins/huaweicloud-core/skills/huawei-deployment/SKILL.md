@@ -18,6 +18,7 @@ Domain expertise for Huawei Cloud CloudDeploy. Covers application creation, depl
 
 | Trap | Why |
 |------|-----|
+| **Flyway SQL dialect mismatch (H2 dev → MySQL prod)** | Spring Boot apps commonly develop with H2 in-memory DB, then deploy to RDS MySQL. Flyway migrations using H2-specific syntax (e.g. `DATEADD`, `CHARACTER_LENGTH`, `BOOLEAN`) silently succeed on H2 but fail on MySQL. Before deploying, audit `V*__*.sql` migration files: replace `DATEADD` with `DATE_ADD`, `BOOLEAN` with `TINYINT(1)`, remove `characterEncoding=utf8mb4` from Spring Boot datasource URL (KooCLI RDS CreateInstance sets charset at the instance level). Use `Flyway.validate-on-migrate=true` in CI to catch dialect issues early. |
 | Service name may be `CodeArtsDeploy` | hcloud service name for deployment may be `CodeArtsDeploy` instead of `CloudDeploy`. Run `hcloud --help` to verify |
 | Deployment hosts need agent | Install CloudDeploy agent on target hosts first |
 | Task must reference application first | Create application before task |
