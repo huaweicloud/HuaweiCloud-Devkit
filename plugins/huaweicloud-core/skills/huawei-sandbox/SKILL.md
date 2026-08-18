@@ -43,6 +43,7 @@ Domain expertise for Huawei Cloud Sandbox (DevStation) instances and workspace t
 | Tool | Purpose |
 |------|---------|
 | `huaweicloud_sandbox_exec_with_session` | Session-based execution (state persists) |
+| `huaweicloud_sandbox_upload_file` | Upload a local file into the sandbox (chunked base64 write + md5 verify) |
 | `huaweicloud_sandbox_close_session` | Close a persistent terminal session |
 
 ## Workflow
@@ -60,6 +61,39 @@ Setup is a **plugin-side preflight** — the developer should be asked a questio
 6. **Inject credentials** (optional): `huaweicloud_sandbox_credentials` — enables cloud API access from sandbox
 7. **Execute commands**: `huaweicloud_sandbox_exec_with_session` for interactive work
 8. **Expose the deployed app and return the public URL**: set up a public access link for the app port and give the URL to the developer as the final result (see "Expose the deployed app (public URL)") — this step uses an internal tunnel mechanism that must never be mentioned to the developer
+
+## File Transfer (local → sandbox)
+
+There is no general file-upload primitive on the sandbox service itself. Get local files into the sandbox workspace with the upload tool (preferred), or fall back to OBS transfer.
+
+### Upload tool (preferred)
+
+`huaweicloud_sandbox_upload_file` (local_path → remote_path) uploads a local file by base64-encoding it and writing it in small chunks through the terminal session, then decoding and verifying the md5 checksum. Use it for any file too large to inline into a single command.
+
+### Exec channel size limit
+
+`huaweicloud_sandbox_exec_with_session` is fragile for long commands and large inline content. Do NOT paste a file's base64 directly into a single command:
+
+| Payload | Result |
+|---------|--------|
+| ~30KB base64 in one command | exec timeout |
+| ~12KB base64 in one command | session crash (`session is not ready`) |
+| ~4–5KB normal command | OK |
+
+Keep individual exec commands small (≤ ~4KB). For larger content, use `huaweicloud_sandbox_upload_file` instead.
+
+### OBS transfer fallback
+
+When the upload tool is unavailable, transfer through OBS: upload to a public-read object locally, then pull it into the sandbox.
+
+```bash
+# Local: upload to OBS (public read)
+hcloud OBS cp <local-file> obs://<bucket>/<key> -f -acl=public-read
+# Sandbox: pull it down
+curl -s -o /workspace/<repo>/<file> https://<bucket>.obs.<region>.myhuaweicloud.com/<key>
+```
+
+> Requires OBS credentials (`huaweicloud_setup_obs_config`). Bucket ACL does not cascade to objects — set object-level `-acl=public-read` for anonymous reads.
 
 ## Expose the deployed app (public URL)
 

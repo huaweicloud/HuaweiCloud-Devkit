@@ -58,6 +58,7 @@ test('TOOL_DEFINITIONS includes all required tools including sandbox', () => {
     'huaweicloud_auth_status',
     'huaweicloud_auth_sync',
     'huaweicloud_sandbox_exec_with_session',
+    'huaweicloud_sandbox_upload_file',
     'huaweicloud_sandbox_close_session',
     'huaweicloud_sandbox_check_user',
     'huaweicloud_sandbox_sign_agreement',

@@ -1,4 +1,6 @@
 import { spawn } from 'node:child_process';
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createConnection, getCredentials } from './hwlink-api.mjs';
@@ -91,6 +93,67 @@ export async function execOneShot(workspaceId, command, username, timeoutMs) {
 export async function execWithSession(workspaceId, command, username, timeoutMs) {
   const session = await getSession(workspaceId, username, timeoutMs);
   return await session.exec(command, { timeoutMs });
+}
+
+export const UPLOAD_CHUNK_SIZE = 3072;
+
+export function splitBase64Chunks(base64, chunkSize = UPLOAD_CHUNK_SIZE) {
+  const chunks = [];
+  for (let offset = 0; offset < base64.length; offset += chunkSize) {
+    chunks.push(base64.slice(offset, offset + chunkSize));
+  }
+  return chunks;
+}
+
+export async function uploadFileWithSession(workspaceId, localPath, remotePath, username = 'root', timeoutMs = 30000) {
+  if (!existsSync(localPath)) {
+    throw new Error(`sandbox upload: local file not found: ${localPath}`);
+  }
+  if (!statSync(localPath).isFile()) {
+    throw new Error(`sandbox upload: path is not a regular file: ${localPath}`);
+  }
+  const content = readFileSync(localPath);
+  const base64 = content.toString('base64');
+  const expectedMd5 = createHash('md5').update(content).digest('hex');
+  const chunks = splitBase64Chunks(base64);
+  const tmp = `${remotePath}.b64tmp`;
+
+  const reset = await execWithSession(workspaceId, `rm -f "${tmp}"`, username, timeoutMs);
+  if (reset.exitCode !== 0) {
+    throw new Error(`sandbox upload: failed to reset temp file: ${reset.stdout || reset.error || reset.exitCode}`);
+  }
+
+  for (const [i, chunk] of chunks.entries()) {
+    const res = await execWithSession(workspaceId, `printf '%s' '${chunk}' >> "${tmp}"`, username, timeoutMs);
+    if (res.exitCode !== 0) {
+      throw new Error(`sandbox upload: failed writing chunk ${i + 1}/${chunks.length}: ${res.stdout || res.error || res.exitCode}`);
+    }
+  }
+
+  const decode = await execWithSession(workspaceId, `base64 -d "${tmp}" > "${remotePath}" && rm -f "${tmp}"`, username, timeoutMs);
+  if (decode.exitCode !== 0) {
+    throw new Error(`sandbox upload: failed decoding to ${remotePath}: ${decode.stdout || decode.error || decode.exitCode}`);
+  }
+
+  const verify = await execWithSession(workspaceId, `md5sum "${remotePath}"`, username, timeoutMs);
+  let md5Verified = false;
+  if (verify.exitCode === 0) {
+    const remoteMd5 = String(verify.stdout || '').trim().split(/\s+/)[0];
+    md5Verified = remoteMd5 === expectedMd5;
+    if (!md5Verified) {
+      throw new Error(`sandbox upload: md5 mismatch for ${remotePath} (expected ${expectedMd5}, got ${remoteMd5 || 'none'})`);
+    }
+  }
+
+  return {
+    ok: true,
+    localPath,
+    remotePath,
+    bytes: content.length,
+    chunks: chunks.length,
+    md5: expectedMd5,
+    md5Verified,
+  };
 }
 
 export async function closeSession(workspaceId, username) {
