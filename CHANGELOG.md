@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.0-next.0](https://github.com/huaweicloud/huaweicloud-devkit/compare/v1.0.2-next.0...v1.1.0-next.0) (2026-08-18)
+
+
+### Features
+
+* check-user 同时返回实名/协议状态，skill 支持两项缺失一并告知 ([3fd04ea](https://github.com/huaweicloud/huaweicloud-devkit/commit/3fd04ea71c1b700bf57749d02f38c3fca7821566))
+* skill 按 check-user 三种 403 分支分别引导用户 ([96509d2](https://github.com/huaweicloud/huaweicloud-devkit/commit/96509d2044ce1205262caf067e33b3df0d5d52b9))
+
+
+### Bug Fixes
+
+* **release:** add checkout steps to prerelease publish job, disable component-in-tag ([8034275](https://github.com/huaweicloud/huaweicloud-devkit/commit/80342750f3a00e01a256675a2131624a947f6dfb))
+* **release:** add checkout steps to prerelease publish job, disable component-in-tag ([12c5272](https://github.com/huaweicloud/huaweicloud-devkit/commit/12c5272c704cec91507a5727c5125c5afe6eadb8))
+* **release:** add checkout steps to prerelease publish job, disable component-in-tag ([53339b4](https://github.com/huaweicloud/huaweicloud-devkit/commit/53339b4327d2b335fea69cef941ac3bda22a23c8))
+
 ## [1.0.2-next.0](https://github.com/huaweicloud/huaweicloud-devkit/compare/huaweicloud-devkit-v1.0.1...huaweicloud-devkit-v1.0.2-next.0) (2026-08-17)
 
 
