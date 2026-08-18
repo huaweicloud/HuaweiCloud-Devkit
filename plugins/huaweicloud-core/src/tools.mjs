@@ -6,7 +6,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
 import { searchMarketplace } from './search-market.mjs';
-import { execWithSession, closeSession, DEFAULT_WORKSPACE_ID } from './sandbox/session-manager.mjs';
+import { execWithSession, closeSession, uploadFileWithSession, DEFAULT_WORKSPACE_ID } from './sandbox/session-manager.mjs';
 import { hdkitCheckUser, hdkitSignAgreement, hdkitConnect, hdkitCredentials } from './sandbox/hdkitservice-api.mjs';
 import { getAuthStatus, syncAuth } from './auth/service.mjs';
 import { readGlobalCredentials, writeObsConfig as writeObsConfigFile } from './auth/credentials.mjs';
@@ -340,6 +340,21 @@ export const TOOL_DEFINITIONS = [
     },
   },
   {
+    name: 'huaweicloud_sandbox_upload_file',
+    description: 'Upload a local file into the sandbox workspace. Base64-encodes the file, writes it in small chunks through the terminal session (the exec channel is fragile for large single commands), then decodes and verifies the md5 checksum. Use this instead of embedding large file content directly in a command.',
+    inputSchema: {
+      type: 'object',
+      required: ['local_path', 'remote_path'],
+      properties: {
+        local_path: { type: 'string', description: 'Absolute path to the local file to upload.' },
+        remote_path: { type: 'string', description: 'Target path in the sandbox, e.g. /workspace/<repo>/index.html.' },
+        workspace_id: { type: 'string', description: 'The workspace ID' },
+        username: { type: 'string', description: 'Login username (default: root)' },
+        timeout_ms: { type: 'number', description: 'Per-command execution timeout in milliseconds (default: 30000)' },
+      },
+    },
+  },
+  {
     name: 'huaweicloud_sandbox_check_user',
     description: 'Check if the current user has completed real-name verification and signed the required agreements. Returns 200 {realnameVerified, agreementSigned} when all good; throws 403 HDKIT_NOT_REALNAME / HDKIT_NOT_AGREEMENT / HDKIT_NOT_REALNAME_AND_AGREEMENT to indicate what is missing. Never signs anything itself.',
     inputSchema: {
@@ -451,6 +466,15 @@ export async function callTool(name, args = {}) {
       const sandboxUser3 = args.username || 'root';
       const closed = await closeSession(sandboxWsId3, sandboxUser3);
       return closed ? 'ok' : 'not_connected';
+    }
+    case 'huaweicloud_sandbox_upload_file': {
+      if (!args.local_path || !args.remote_path) {
+        throw new Error('local_path and remote_path are required.');
+      }
+      const sandboxWsId4 = args.workspace_id || DEFAULT_WORKSPACE_ID;
+      const sandboxUser4 = args.username || 'root';
+      const sandboxTimeout4 = args.timeout_ms || 30000;
+      return await uploadFileWithSession(sandboxWsId4, args.local_path, args.remote_path, sandboxUser4, sandboxTimeout4);
     }
     case 'huaweicloud_sandbox_check_user':
       return await hdkitCheckUser();
