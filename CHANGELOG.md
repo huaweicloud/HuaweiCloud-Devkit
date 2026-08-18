@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2-next.0](https://github.com/huaweicloud/huaweicloud-devkit/compare/v1.1.1-next.0...v1.1.2-next.0) (2026-08-18)
+
+
+### Bug Fixes
+
+* **release:** add setup-node with registry-url so NODE_AUTH_TOKEN authenticates npm publish ([4da57c6](https://github.com/huaweicloud/huaweicloud-devkit/commit/4da57c663abc653032c3b6fab52d31965148f07c))
+
 ## [1.1.1-next.0](https://github.com/huaweicloud/huaweicloud-devkit/compare/v1.1.0-next.0...v1.1.1-next.0) (2026-08-18)
 
 
