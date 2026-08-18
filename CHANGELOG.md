@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.0-next.4](https://github.com/huaweicloud/huaweicloud-devkit/compare/v1.0.2-next.4...v1.1.0-next.4) (2026-08-18)
+
+
+### Features
+
+* **huawei-sandbox:** add chunked file upload primitive for local-to-sandbox transfer ([#120](https://github.com/huaweicloud/huaweicloud-devkit/issues/120)) ([3b06a7a](https://github.com/huaweicloud/huaweicloud-devkit/commit/3b06a7aac54fe9eed5ac65d33f9626b311c08c7f)), closes [#92](https://github.com/huaweicloud/huaweicloud-devkit/issues/92)
+
+
+### Bug Fixes
+
+* escape backslashes in pack-verify.mjs quote helper ([#122](https://github.com/huaweicloud/huaweicloud-devkit/issues/122)) ([b4c5071](https://github.com/huaweicloud/huaweicloud-devkit/commit/b4c507172c3a07153bd61b6b78db8d849d0ff615))
+* **sandbox:** validate local_path before file upload, register upload tool in policy ([#121](https://github.com/huaweicloud/huaweicloud-devkit/issues/121)) ([5221e97](https://github.com/huaweicloud/huaweicloud-devkit/commit/5221e979de26f49f3ffb53296415a7dfe8674224))
+* **skills:** document CCE field-by-field errors and Flyway SQL dialect trap ([#125](https://github.com/huaweicloud/huaweicloud-devkit/issues/125)) ([88def53](https://github.com/huaweicloud/huaweicloud-devkit/commit/88def53771e163eb18a756a9b599aacbd952df75))
+
 ## [1.0.2-next.4](https://github.com/huaweicloud/huaweicloud-devkit/compare/v1.0.2-next.3...v1.0.2-next.4) (2026-08-18)
 
 
