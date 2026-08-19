@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2-next.10 (2026-08-19)
+
+- style: apply prettier formatting
+- feat: add huaweicloud-devkit-mcp bin entry for standard MCP config
+
 ## 1.0.2-next.9 (2026-08-19)
 
 - style: apply prettier, relax structure assertion for reformatted fallback
