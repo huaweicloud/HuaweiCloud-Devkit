@@ -10,7 +10,8 @@
     "integrations/opencode"
   ],
   "bin": {
-    "huaweicloud-devkit": "./bin/setup.cjs"
+    "huaweicloud-devkit": "./bin/setup.cjs",
+    "huaweicloud-devkit-mcp": "./plugins/huaweicloud-core/src/mcp-server.mjs"
   },
   "repository": {
     "type": "git",

@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 import { stdin, stdout } from 'node:process';
 import { rmSync, existsSync } from 'node:fs';
