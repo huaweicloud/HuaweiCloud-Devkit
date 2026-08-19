@@ -259,7 +259,14 @@ test('tools.mjs resolves skills from the codearts directory', () => {
   const tools = readFileSync(join(pluginRoot, 'src', 'tools.mjs'), 'utf8');
   assert.match(tools, /function codeartsSkillsDir\(\)/);
   assert.match(tools, /return join\(home, '\.codeartsdoer', 'skills'\);/);
-  assert.match(tools, /if \(existsSync\(codeartsSkillsDir\(\)\)\) return codeartsSkillsDir\(\);/);
+  // candidates only count when they contain at least one skill with SKILL.md
+  assert.match(tools, /export function findSkillsRoot/);
+  assert.match(tools, /export function listSkillDirs/);
+  assert.match(tools, /existsSync\(join\(root, d\.name, 'SKILL\.md'\)\)/);
+  assert.match(
+    tools,
+    /findSkillsRoot\(\[[\s\S]*?SKILLS_ROOT_DEV[\s\S]*?dshSkillsDir\(\)[\s\S]*?codeartsSkillsDir\(\)[\s\S]*?opencodeSkillsDir\(\)[\s\S]*?workbuddySkillsDir\(\)[\s\S]*?\]\)/,
+  );
 });
 
 test('setup-cli.mjs handles KooCLI sandbox blockers and privacy agreement', () => {
@@ -336,7 +343,9 @@ test('tools.mjs resolves skills from the dsh directory', () => {
   assert.match(tools, /function dshSkillsDir\(\)/);
   assert.match(tools, /process\.env\.DSH_HOME \|\| join\(homedir\(\), '\.dsh'\)/);
   assert.match(tools, /return join\(home, 'skills'\);/);
-  assert.match(tools, /if \(existsSync\(dshSkillsDir\(\)\)\) return dshSkillsDir\(\);/);
+  // stale or empty dirs must not short-circuit the fallback chain
+  assert.match(tools, /resolveSkillsRoot[\s\S]*?findSkillsRoot\(\[/);
+  assert.match(tools, /\|\|\s*SKILLS_ROOT_DEV/);
   assert.match(tools, /opencode, codex, codex-desktop, codearts, workbuddy, dsh, or all/);
 });
 

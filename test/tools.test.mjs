@@ -1,9 +1,15 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, symlinkSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { callTool, runVersionCheck, TOOL_DEFINITIONS } from '../plugins/huaweicloud-core/src/tools.mjs';
+import {
+  callTool,
+  runVersionCheck,
+  TOOL_DEFINITIONS,
+  findSkillsRoot,
+  listSkillDirs,
+} from '../plugins/huaweicloud-core/src/tools.mjs';
 
 test('runVersionCheck uses hcloud version instead of --version', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'huaweicloud-toolkit-version-'));
@@ -130,4 +136,43 @@ test('service_catalog keeps storage routing for pure storage intent', async () =
   const result = await callTool('huaweicloud_service_catalog', { intent: 'store files in an obs bucket' });
   assert.ok(result.recommendedSkills.includes('huawei-obs'));
   assert.notEqual(result.recommendedSkills[0], 'huawei-sandbox');
+});
+
+test('findSkillsRoot skips stale dirs without SKILL.md and picks the first real skills root', () => {
+  const base = mkdtempSync(join(tmpdir(), 'huaweicloud-skills-root-'));
+  try {
+    const empty = join(base, 'empty');
+    const stale = join(base, 'stale');
+    const real = join(base, 'real');
+    mkdirSync(empty);
+    mkdirSync(stale);
+    mkdirSync(join(stale, 'leftover'), { recursive: true });
+    mkdirSync(join(real, 'huawei-ecs'), { recursive: true });
+    writeFileSync(join(real, 'huawei-ecs', 'SKILL.md'), '---\nname: huawei-ecs\n---\n', 'utf8');
+
+    assert.equal(findSkillsRoot([empty, stale, real]), real);
+    assert.equal(findSkillsRoot([empty, stale]), null);
+    assert.equal(findSkillsRoot([]), null);
+  } finally {
+    rmSync(base, { recursive: true, force: true });
+  }
+});
+
+test('listSkillDirs ignores files, subdirs without SKILL.md, and counts symlinked skill dirs', () => {
+  const base = mkdtempSync(join(tmpdir(), 'huaweicloud-list-skills-'));
+  try {
+    const root = join(base, 'root');
+    const external = join(base, 'external');
+    mkdirSync(root, { recursive: true });
+    mkdirSync(join(external, 'huawei-vpc'), { recursive: true });
+    writeFileSync(join(external, 'huawei-vpc', 'SKILL.md'), '---\nname: huawei-vpc\n---\n', 'utf8');
+    symlinkSync(join(external, 'huawei-vpc'), join(root, 'huawei-vpc'));
+    mkdirSync(join(root, 'no-skill'));
+    writeFileSync(join(root, 'stray.md'), 'x');
+
+    assert.deepEqual(listSkillDirs(root).sort(), ['huawei-vpc']);
+    assert.deepEqual(listSkillDirs(join(base, 'missing')), []);
+  } finally {
+    rmSync(base, { recursive: true, force: true });
+  }
 });

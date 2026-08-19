@@ -35,13 +35,29 @@ function dshSkillsDir() {
   const home = process.env.DSH_HOME || join(homedir(), '.dsh');
   return join(home, 'skills');
 }
+export function listSkillDirs(root) {
+  if (!existsSync(root)) return [];
+  try {
+    return readdirSync(root, { withFileTypes: true })
+      .filter((d) => (d.isDirectory() || d.isSymbolicLink()) && existsSync(join(root, d.name, 'SKILL.md')))
+      .map((d) => d.name);
+  } catch {
+    return [];
+  }
+}
+
+export function findSkillsRoot(candidates) {
+  for (const dir of candidates) {
+    if (listSkillDirs(dir).length > 0) return dir;
+  }
+  return null;
+}
+
 function resolveSkillsRoot() {
-  if (existsSync(SKILLS_ROOT_DEV)) return SKILLS_ROOT_DEV;
-  if (existsSync(dshSkillsDir())) return dshSkillsDir();
-  if (existsSync(codeartsSkillsDir())) return codeartsSkillsDir();
-  if (existsSync(opencodeSkillsDir())) return opencodeSkillsDir();
-  if (existsSync(workbuddySkillsDir())) return workbuddySkillsDir();
-  return SKILLS_ROOT_DEV;
+  return (
+    findSkillsRoot([SKILLS_ROOT_DEV, dshSkillsDir(), codeartsSkillsDir(), opencodeSkillsDir(), workbuddySkillsDir()]) ||
+    SKILLS_ROOT_DEV
+  );
 }
 const SKILLS_ROOT = resolveSkillsRoot();
 
@@ -1060,9 +1076,7 @@ async function searchDocs(query, topic = 'all') {
   const results = [];
   try {
     if (existsSync(SKILLS_ROOT)) {
-      const dirs = readdirSync(SKILLS_ROOT, { withFileTypes: true })
-        .filter((d) => d.isDirectory())
-        .map((d) => d.name);
+      const dirs = listSkillDirs(SKILLS_ROOT);
       for (const dir of dirs) {
         const skillPath = join(SKILLS_ROOT, dir, 'SKILL.md');
         if (!existsSync(skillPath)) continue;
@@ -1114,11 +1128,7 @@ async function retrieveSkill(name) {
   if (!skillName) return { ok: false, error: 'Skill name is required.' };
   const skillPath = join(SKILLS_ROOT, skillName, 'SKILL.md');
   if (!existsSync(skillPath)) {
-    const dirs = existsSync(SKILLS_ROOT)
-      ? readdirSync(SKILLS_ROOT, { withFileTypes: true })
-          .filter((d) => d.isDirectory())
-          .map((d) => d.name)
-      : [];
+    const dirs = listSkillDirs(SKILLS_ROOT);
     return { ok: false, error: 'Skill "' + skillName + '" not found. Available: ' + dirs.join(', ') };
   }
   const content = readFileSync(skillPath, 'utf8');
