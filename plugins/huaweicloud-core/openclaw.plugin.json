@@ -1,5 +1,6 @@
 {
   "name": "huaweicloud-devkit",
+  "id": "huaweicloud-devkit",
   "displayName": "HuaweiCloud DevKit",
   "version": "1.0.2-next.16",
   "family": "bundle-plugin",
