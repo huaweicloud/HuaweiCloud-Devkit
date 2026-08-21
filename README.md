@@ -4,6 +4,18 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![CI](https://github.com/huaweicloud/huaweicloud-devkit/actions/workflows/ci.yml/badge.svg)](https://github.com/huaweicloud/huaweicloud-devkit/actions/workflows/ci.yml)
 
+<div align="center">
+  <h3>🌟 分享你的 DevKit 使用场景，赢取华为云代金券！</h3>
+  <p>
+    📢 分享你的真实案例，每月评选最佳实践 🥇
+    <br>
+    👉 <a href="https://github.com/huaweicloud/huaweicloud-devkit/discussions/218"><strong>立即参与 →</strong></a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    ⭐ <a href="https://github.com/huaweicloud/huaweicloud-devkit"><strong>给 DevKit 点 Star</strong></a>
+  </p>
+  <hr>
+</div>
+
 **[中文](README.zh-CN.md) | English**
 
 Help AI coding agents use Huawei Cloud safely and accurately — a single integration that gives agents cloud knowledge, CLI tooling, and safety guardrails.
