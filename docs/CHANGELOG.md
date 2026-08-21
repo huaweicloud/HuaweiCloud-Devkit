@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.0.2-next.20 (2026-08-21)
+
+- style: prettier format
+- test(ci): add multi-agent plugin install/uninstall e2e tests
+- ci: bump all Node 20 references to 24 across workflows
+- ci: bump Node.js test matrix from 20/22 to 22/24
+- fix: align Node.js version declaration from >=20 to >=22
+- style: apply prettier formatting
+- fix: remove WorkBuddy hooks to avoid high-risk prompt, add sandbox-first scenario routing
+- style: prettier format setup-cli.mjs
+- fix: add timeout:300000 to MCP config in install scripts
+- fix: increase upload_project default timeout from 120s to 300s
+- fix: rename installed package name from huaweicloud-plugins to huaweicloud-devkit, add npx cache cleanup to README
+- docs: add NOTICE and source attribution headers for hwlink-derived code
+- Revert "[ci]: add PR code review workflow "
+
 ## 1.0.2-next.19 (2026-08-21)
 
 - style: prettier format
