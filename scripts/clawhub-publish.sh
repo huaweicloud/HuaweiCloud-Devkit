@@ -8,7 +8,7 @@
 set -euo pipefail
 
 VERSION="${1:?Usage: $0 <version>}"
-OWNER="${CLAWHUB_OWNER:-huaweiclouddev}"
+OWNER="${CLAWHUB_OWNER:-huaweicloud}"
 NAME="huaweicloud-devkit"
 DISPLAY_NAME="HuaweiCloud DevKit"
 
