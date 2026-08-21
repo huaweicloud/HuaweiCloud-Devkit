@@ -31,7 +31,7 @@ npx --yes huaweicloud-devkit doctor --target opencode
 npx --yes huaweicloud-devkit status --target opencode
 npx --yes huaweicloud-devkit update --target opencode
 npx --yes huaweicloud-devkit uninstall --target opencode
-rm -rf ~/.npm/_npx/  # Linux/macOS: 清理 npx 缓存避免旧版残留
+rm -rf ~/.npm/_npx/  # 仅 Linux/macOS；Windows 路径待确认
 ```
 
 ### CodeArts Agent（码道）
@@ -111,7 +111,7 @@ npx --yes huaweicloud-devkit doctor --target openclaw
 npx --yes huaweicloud-devkit status --target openclaw
 npx --yes huaweicloud-devkit update --target openclaw
 npx --yes huaweicloud-devkit uninstall --target openclaw
-rm -rf ~/.npm/_npx/  # Linux/macOS: 清理 npx 缓存避免旧版残留
+rm -rf ~/.npm/_npx/  # 仅 Linux/macOS；Windows 路径待确认
 ```
 
 ### 其他 Agent
