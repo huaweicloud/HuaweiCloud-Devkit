@@ -12,6 +12,7 @@ export const SUPPORTED_AGENT_TARGETS = [
   'workbuddy',
   'dsh',
   'officeace',
+  'hermes',
   'openclaw',
 ];
 
@@ -168,6 +169,26 @@ function officeaceRegistered() {
   return hasMcp || hasSkills;
 }
 
+function hermesHome() {
+  if (process.env.HERMES_HOME) return process.env.HERMES_HOME;
+  // Hermes on Windows stores under LOCALAPPDATA, not ~/.hermes
+  if (process.platform === 'win32' && process.env.LOCALAPPDATA) {
+    return join(process.env.LOCALAPPDATA, 'hermes');
+  }
+  return join(baseHome(), '.hermes');
+}
+
+function hermesRegistered() {
+  const configPath = join(hermesHome(), 'config.yaml');
+  if (!existsSync(configPath)) return false;
+  try {
+    const content = readFileSync(configPath, 'utf8');
+    return content.includes('mcp_servers:') && content.includes('huaweicloud-devkit');
+  } catch {
+    return false;
+  }
+}
+
 export function getAgentRegistrationStatuses(target = 'all') {
   const requested = target === 'all' ? SUPPORTED_AGENT_TARGETS : [target];
   const result = { target, agents: {} };
@@ -180,6 +201,7 @@ export function getAgentRegistrationStatuses(target = 'all') {
     if (agent === 'workbuddy') configured = workbuddyRegistered();
     if (agent === 'dsh') configured = dshRegistered();
     if (agent === 'officeace') configured = officeaceRegistered();
+    if (agent === 'hermes') configured = hermesRegistered();
     result.agents[agent] = { configured };
   }
   return result;
