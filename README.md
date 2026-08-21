@@ -8,7 +8,7 @@
 
 Help AI coding agents use Huawei Cloud safely and accurately — a single integration that gives agents cloud knowledge, CLI tooling, and safety guardrails.
 
-Supports OpenCode, CodeArts Agent, WorkBuddy, DeepSeek Harness (DSH), and OfficeAce.
+Supports OpenCode, CodeArts Agent, WorkBuddy, DeepSeek Harness (DSH), OfficeAce, and OpenClaw.
 
 ## Prerequisites
 
@@ -96,6 +96,22 @@ npx --yes huaweicloud-devkit doctor --target officeace
 npx --yes huaweicloud-devkit status --target officeace
 npx --yes huaweicloud-devkit update --target officeace
 npx --yes huaweicloud-devkit uninstall --target officeace
+```
+
+### OpenClaw
+
+```bash
+npx --yes huaweicloud-devkit install --target openclaw
+```
+
+**Restart OpenClaw** after installation.
+
+```bash
+npx --yes huaweicloud-devkit doctor --target openclaw
+npx --yes huaweicloud-devkit status --target openclaw
+npx --yes huaweicloud-devkit update --target openclaw
+npx --yes huaweicloud-devkit uninstall --target openclaw
+rm -rf ~/.npm/_npx/  # Linux/macOS: clear npx cache to remove old version residue
 ```
 
 ### Other Agents
