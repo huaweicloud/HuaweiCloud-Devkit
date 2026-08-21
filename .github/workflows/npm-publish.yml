@@ -66,3 +66,28 @@ jobs:
             *-*) npm publish --access public --tag next ;;
             *) npm publish --access public --tag latest ;;
           esac
+
+  publish-clawhub:
+    name: Publish to ClawHub
+    needs: publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: npm-publish
+    if: ${{ vars.CLAWHUB_ENABLED == 'true' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install clawhub CLI
+        run: npm install -g clawhub
+      - name: Login to ClawHub
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+        run: clawhub login --token "$CLAWHUB_TOKEN"
+      - name: Publish to ClawHub
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          bash scripts/clawhub-publish.sh "$VERSION"
