@@ -12,6 +12,7 @@ export const SUPPORTED_AGENT_TARGETS = [
   'workbuddy',
   'dsh',
   'officeace',
+  'openclaw',
 ];
 
 function baseHome() {
