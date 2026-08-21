@@ -6,6 +6,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { join, dirname, basename } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+
 import { createConnection, getCredentials } from './hwlink-api.mjs';
 import { getWebSocketImpl } from '../proxy/proxy-agent.mjs';
 
@@ -361,7 +362,7 @@ async function uploadViaTunnel(localPort, archivePath, archiveSize, archiveRemot
             }
             try {
               resolve(JSON.parse(body));
-            } catch (e) {
+            } catch (error) {
               reject(new Error(`invalid JSON response: ${body.slice(0, 200)}`));
             }
           });
@@ -382,7 +383,7 @@ async function uploadViaTunnel(localPort, archivePath, archiveSize, archiveRemot
         }
         try {
           resolve(JSON.parse(body));
-        } catch (e) {
+        } catch (error) {
           reject(new Error(`invalid JSON response: ${body.slice(0, 200)}`));
         }
       });
@@ -426,8 +427,8 @@ async function waitForServerReady(localPort) {
         return;
       }
       uploadLog(`waitForServerReady: health check returned non-200 (retry ${i + 1})`);
-    } catch (err) {
-      uploadLog(`waitForServerReady: health check failed: ${err.message} (retry ${i + 1})`);
+    } catch (error) {
+      uploadLog(`waitForServerReady: health check failed: ${error.message} (retry ${i + 1})`);
     }
     await new Promise((r) => setTimeout(r, SERVER_HEALTH_INTERVAL_MS));
   }

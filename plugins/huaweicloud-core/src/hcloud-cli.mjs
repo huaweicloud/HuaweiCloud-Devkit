@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+
 import { classifyHcloudArgs, redactSecrets, assertAllowed } from './safety-policy.mjs';
 import { getProxySettings } from './proxy/proxy-config.mjs';
 
@@ -9,7 +10,7 @@ const DEFAULT_MAX_RETRIES = 1;
 export function planHcloudCommand(args, options = {}) {
   const normalizedArgs = Array.isArray(args) ? args.map(String) : [];
   const classification = classifyHcloudArgs(normalizedArgs, options);
-  const command = ['hcloud', ...normalizedArgs].map(quoteShellArg).join(' ');
+  const command = ['hcloud', ...normalizedArgs].map((arg) => quoteShellArg(arg)).join(' ');
   const warnings = planningWarnings(normalizedArgs);
   const paramValidation = validateRequiredParams(normalizedArgs);
   if (paramValidation.missing.length > 0) {

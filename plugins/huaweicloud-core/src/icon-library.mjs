@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import { getProxyDispatcher } from './proxy/proxy-agent.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -113,7 +114,11 @@ export async function getServiceIcon(service = '', category = '') {
     };
   }
   const { manifest, source } = await loadManifest();
-  const tokens = query.replace(/[,;]/g, ' ').split(/\s+/).filter(Boolean).map(normalizeToken);
+  const tokens = query
+    .replace(/[,;]/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((t) => normalizeToken(t));
 
   const index = { aliases: {}, tags: {}, categories: {}, descriptions: {} };
   for (const icon of manifest.icons) {

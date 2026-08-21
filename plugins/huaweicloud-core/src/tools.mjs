@@ -1,10 +1,11 @@
-import { planHcloudCommand, runHcloud } from './hcloud-cli.mjs';
-import { classifyTextCommand, redactSecrets } from './safety-policy.mjs';
-import { evaluateArtifacts, evaluateCommandRisk, evaluateDeployPlan } from './risk-rule-engine.mjs';
 import { readFileSync, readdirSync, existsSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
+
+import { evaluateArtifacts, evaluateCommandRisk, evaluateDeployPlan } from './risk-rule-engine.mjs';
+import { classifyTextCommand, redactSecrets } from './safety-policy.mjs';
+import { planHcloudCommand, runHcloud } from './hcloud-cli.mjs';
 import { searchMarketplace } from './search-market.mjs';
 import { getServiceIcon } from './icon-library.mjs';
 import {
@@ -851,11 +852,11 @@ async function setupObsConfigFromHcloud(profile) {
 
   try {
     writeFileSync(obsConfigPath, configContent, { encoding: 'utf8', mode: 0o600 });
-  } catch (e) {
+  } catch (error) {
     return {
       ok: false,
       error: 'Failed to write OBS config file.',
-      detail: e.message,
+      detail: error.message,
       path: obsConfigPath,
     };
   }
@@ -1041,10 +1042,10 @@ function serviceCatalog(intent = '') {
     },
   ];
   const matched = [];
-  const tokens = it.split(/[\s,./-]+/).filter((t) => t.length > 0);
+  const tokens = new Set(it.split(/[\s,./-]+/).filter((t) => t.length > 0));
   const cjk = /[\u4e00-\u9fff]/;
   for (const route of routeMap) {
-    if (route.keywords.some((kw) => (kw.includes(' ') || cjk.test(kw) ? it.includes(kw) : tokens.includes(kw)))) {
+    if (route.keywords.some((kw) => (kw.includes(' ') || cjk.test(kw) ? it.includes(kw) : tokens.has(kw)))) {
       matched.push(route);
     }
   }
@@ -1237,8 +1238,8 @@ async function searchDocs(query, topic = 'all') {
         }
       }
     }
-  } catch (err) {
-    return { ok: false, error: err.message, results: [] };
+  } catch (error) {
+    return { ok: false, error: error.message, results: [] };
   }
   results.sort((a, b) => b.relevance - a.relevance);
   return { ok: true, query: q, topic, count: results.length, results: results.slice(0, 10) };
@@ -1275,10 +1276,12 @@ async function retrieveSkill(name) {
 }
 
 async function listRegions() {
-  const result = await runHcloud(['IAM', 'KeystoneListRegions'], { timeoutMs: 30000, maxRetries: 0 }).catch((err) => ({
-    ok: false,
-    error: err.message,
-  }));
+  const result = await runHcloud(['IAM', 'KeystoneListRegions'], { timeoutMs: 30000, maxRetries: 0 }).catch(
+    (error) => ({
+      ok: false,
+      error: error.message,
+    }),
+  );
   if (!result.ok) {
     return {
       ok: false,

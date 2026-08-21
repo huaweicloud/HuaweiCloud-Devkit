@@ -15,6 +15,7 @@ import { createInterface } from 'node:readline';
 import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import Database from 'better-sqlite3';
+
 import { getAuthStatus, syncAuth } from './auth/service.mjs';
 import { SUPPORTED_AGENT_TARGETS } from './auth/agent-registration.mjs';
 import {
@@ -223,13 +224,13 @@ function ensureOfficeaceMcpInSqlite() {
     }
     db.close();
     return true;
-  } catch (err) {
+  } catch (error) {
     if (db) {
       try {
         db.close();
       } catch {}
     }
-    console.log(`  \x1b[31mFailed to write MCP config: ${err.message}\x1b[0m`);
+    console.log(`  \x1b[31mFailed to write MCP config: ${error.message}\x1b[0m`);
     return false;
   }
 }
@@ -248,13 +249,13 @@ function removeOfficeaceMcpFromSqlite() {
       console.log(`  MCP config removed: ${dbPath}`);
     }
     db.close();
-  } catch (err) {
+  } catch (error) {
     if (db) {
       try {
         db.close();
       } catch {}
     }
-    console.log(`  \x1b[31mFailed to remove MCP config: ${err.message}\x1b[0m`);
+    console.log(`  \x1b[31mFailed to remove MCP config: ${error.message}\x1b[0m`);
   }
 }
 
@@ -438,8 +439,8 @@ function removeIfExists(p) {
     try {
       rmSync(p, { recursive: true, force: true });
       return true;
-    } catch (e) {
-      console.log(`  \x1b[33m[WARN]\x1b[0m Could not remove ${p}: ${e.message}`);
+    } catch (error) {
+      console.log(`  \x1b[33m[WARN]\x1b[0m Could not remove ${p}: ${error.message}`);
       return false;
     }
   }
@@ -2307,8 +2308,8 @@ async function cmdInstallHcloud() {
       }
 
       console.log('  Or restart terminal and: hcloud version');
-    } catch (e) {
-      console.log(`\n\x1b[33mAuto-install failed: ${e.message}\x1b[0m`);
+    } catch (error) {
+      console.log(`\n\x1b[33mAuto-install failed: ${error.message}\x1b[0m`);
       console.log(`  Manual: download ${url}, unzip to ${installDir}, add to PATH`);
       console.log(`  Guide: https://support.huaweicloud.com/qs-hcli/hcli_02_003_01.html`);
       if (detectCodeartsSandbox() === 'sandbox') {
@@ -2697,7 +2698,7 @@ async function main() {
   }
 }
 
-main().catch((e) => {
-  console.error(`\x1b[31mError: ${e.message}\x1b[0m`);
+main().catch((error) => {
+  console.error(`\x1b[31mError: ${error.message}\x1b[0m`);
   process.exit(1);
 });

@@ -93,7 +93,7 @@ class HwlinkWebSocketMultiplexer {
     const { WebSocketImpl = globalThis.WebSocket, protocol = 'devenv', onFrame, trace = false } = options;
 
     if (typeof WebSocketImpl !== 'function') {
-      throw new Error('global WebSocket is unavailable; use Node.js 22+ or pass WebSocketImpl');
+      throw new TypeError('global WebSocket is unavailable; use Node.js 22+ or pass WebSocketImpl');
     }
     if (!Number.isInteger(source) || source < -0x80000000 || source > 0xffffffff) {
       throw new Error('hwlink source must be an int32 or uint32 number');

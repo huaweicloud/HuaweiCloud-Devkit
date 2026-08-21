@@ -3,6 +3,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, symlinkSync, rmSync } from 'node
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
+
 import {
   callTool,
   runVersionCheck,
@@ -79,10 +80,10 @@ test('TOOL_DEFINITIONS expose cwd parameter on run tools', () => {
 });
 
 test('TOOL_DEFINITIONS includes proactive hook check tools', () => {
-  const names = TOOL_DEFINITIONS.map((tool) => tool.name);
-  assert.ok(names.includes('huaweicloud_hook_check_command'));
-  assert.ok(names.includes('huaweicloud_hook_check_artifacts'));
-  assert.ok(names.includes('huaweicloud_hook_check_deploy_plan'));
+  const names = new Set(TOOL_DEFINITIONS.map((tool) => tool.name));
+  assert.ok(names.has('huaweicloud_hook_check_command'));
+  assert.ok(names.has('huaweicloud_hook_check_artifacts'));
+  assert.ok(names.has('huaweicloud_hook_check_deploy_plan'));
 });
 
 test('huaweicloud_hook_check_command returns deny finding', async () => {
@@ -170,7 +171,10 @@ test('listSkillDirs ignores files, subdirs without SKILL.md, and counts symlinke
     mkdirSync(join(root, 'no-skill'));
     writeFileSync(join(root, 'stray.md'), 'x');
 
-    assert.deepEqual(listSkillDirs(root).sort(), ['huawei-vpc']);
+    assert.deepEqual(
+      listSkillDirs(root).sort((a, b) => a.localeCompare(b)),
+      ['huawei-vpc'],
+    );
     assert.deepEqual(listSkillDirs(join(base, 'missing')), []);
   } finally {
     rmSync(base, { recursive: true, force: true });

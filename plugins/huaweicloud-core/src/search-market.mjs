@@ -62,8 +62,8 @@ async function fetchJson(url, label = '') {
       return JSON.parse(decoded);
     }
     return data;
-  } catch (e) {
-    throw new Error(`Failed to fetch ${label}: ${e.message}`, { cause: e });
+  } catch (error) {
+    throw new Error(`Failed to fetch ${label}: ${error.message}`, { cause: error });
   } finally {
     clearTimeout(timer);
   }
@@ -100,7 +100,7 @@ function expandKeywords(rawKeyword, cnEnMap) {
       if (en === lower) expanded.push(cn);
     }
   }
-  const unique = [...new Set(expanded)].sort();
+  const unique = [...new Set(expanded)].sort((a, b) => a.localeCompare(b));
   const specific = unique.filter((kw) => !isGeneric(kw));
   const generic = unique.filter((kw) => isGeneric(kw));
   return [specific, generic];

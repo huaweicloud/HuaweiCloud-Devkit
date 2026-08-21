@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+
 import { getAgentRegistrationStatuses } from './agent-registration.mjs';
 import { globalCredentialsPath, obsConfigPath, readGlobalCredentials, writeObsConfig } from './credentials.mjs';
 

@@ -3,6 +3,7 @@ import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
+
 import { planHcloudCommand, runHcloud } from '../plugins/huaweicloud-core/src/hcloud-cli.mjs';
 
 function fakeHcloudScript(source) {

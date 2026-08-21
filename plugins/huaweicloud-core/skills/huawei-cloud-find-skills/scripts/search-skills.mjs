@@ -66,7 +66,7 @@ function expandKeywords(raw, cnEnMap) {
       if (en === lower) expanded.push(cn);
     }
   }
-  const unique = [...new Set(expanded)].sort();
+  const unique = [...new Set(expanded)].sort((a, b) => a.localeCompare(b));
   return [unique.filter((kw) => !isGeneric(kw)), unique.filter((kw) => isGeneric(kw))];
 }
 
@@ -162,8 +162,8 @@ async function main() {
       );
       console.log(`    ${r.description}`);
     }
-  } catch (e) {
-    console.error(`Error: ${e.message}`);
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
     process.exit(1);
   }
 }

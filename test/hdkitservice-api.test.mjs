@@ -25,7 +25,7 @@ test('hdkitservice connect parses backend traceId (camelCase) on error', async (
   try {
     const err = await hdkitConnect({}).then(
       () => null,
-      (e) => e,
+      (error) => error,
     );
     assert.ok(err, 'expected hdkitConnect to reject');
     assert.equal(err.message, '服务内部错误');

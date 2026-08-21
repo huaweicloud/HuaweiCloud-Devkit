@@ -3,6 +3,7 @@ import { stdin, stdout } from 'node:process';
 import { rmSync, existsSync, readFileSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import { TOOL_DEFINITIONS, callTool } from './tools.mjs';
 
 try {

@@ -88,15 +88,15 @@ test('MCP server initializes, lists tools, and plans CLI commands', async () => 
     assert.equal(initialized.result.serverInfo.name, 'huaweicloud-devkit');
 
     const listed = await client.request('tools/list');
-    const toolNames = listed.result.tools.map((tool) => tool.name);
-    assert.ok(toolNames.includes('huaweicloud_plan_cli_command'));
-    assert.ok(toolNames.includes('huaweicloud_list_operations'));
-    assert.ok(toolNames.includes('huaweicloud_run_approved_command'));
-    assert.ok(toolNames.includes('huaweicloud_show_profile_redacted'));
-    assert.ok(toolNames.includes('huaweicloud_auth_status'));
-    assert.ok(toolNames.includes('huaweicloud_auth_sync'));
-    assert.ok(toolNames.includes('huaweicloud_sandbox_check_user'));
-    assert.ok(toolNames.includes('huaweicloud_sandbox_connect'));
+    const toolNames = new Set(listed.result.tools.map((tool) => tool.name));
+    assert.ok(toolNames.has('huaweicloud_plan_cli_command'));
+    assert.ok(toolNames.has('huaweicloud_list_operations'));
+    assert.ok(toolNames.has('huaweicloud_run_approved_command'));
+    assert.ok(toolNames.has('huaweicloud_show_profile_redacted'));
+    assert.ok(toolNames.has('huaweicloud_auth_status'));
+    assert.ok(toolNames.has('huaweicloud_auth_sync'));
+    assert.ok(toolNames.has('huaweicloud_sandbox_check_user'));
+    assert.ok(toolNames.has('huaweicloud_sandbox_connect'));
 
     const runReadonly = listed.result.tools.find((tool) => tool.name === 'huaweicloud_run_readonly_command');
     assert.ok(Object.hasOwn(runReadonly.inputSchema.properties, 'timeoutMs'));

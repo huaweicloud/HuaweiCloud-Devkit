@@ -287,10 +287,12 @@ class WebSocketShellSession {
     const markerIndex = pending.buffer.lastIndexOf(doneMarker);
     if (markerIndex === -1) return;
 
+    // eslint-disable-next-line unicorn/no-unsafe-buffer-conversion -- pending.buffer is a String, not a Buffer
     const afterMarker = pending.buffer.slice(markerIndex + doneMarker.length);
     const exitMatch = afterMarker.match(/^(\d+)/);
     if (!exitMatch) return;
 
+    // eslint-disable-next-line unicorn/no-unsafe-buffer-conversion -- pending.buffer is a String, not a Buffer
     const rawOutput = pending.buffer.slice(0, markerIndex);
     const stdout = cleanCommandOutput(rawOutput, {
       inputEchoed: this.inputEchoed,
