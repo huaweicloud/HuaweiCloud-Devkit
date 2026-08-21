@@ -1735,7 +1735,9 @@ async function cmdInstall() {
                 ? 'OfficeAce'
                 : target === 'openclaw'
                   ? 'OpenClaw'
-                  : 'OpenCode';
+                  : target === 'all'
+                    ? '当前 agent'
+                    : 'OpenCode';
   const pad = ' '.repeat(24 - appName.length);
   console.log(`\n\x1b[1m\x1b[33m╔══════════════════════════════════════════════════════╗`);
   console.log(`\x1b[1m\x1b[33m║  MCP 工具在重启 ${appName} 会话后才生效${pad}║`);
