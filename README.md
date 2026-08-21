@@ -31,6 +31,7 @@ npx --yes huaweicloud-devkit doctor --target opencode
 npx --yes huaweicloud-devkit status --target opencode
 npx --yes huaweicloud-devkit update --target opencode
 npx --yes huaweicloud-devkit uninstall --target opencode
+rm -rf ~/.npm/_npx/  # Linux/macOS: clear npx cache to remove old version residue
 ```
 
 ### CodeArts Agent
