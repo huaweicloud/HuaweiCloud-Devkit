@@ -123,7 +123,7 @@ rm -rf ~/.npm/_npx/  # 仅 Linux/macOS；Windows 路径待确认
   "mcpServers": {
     "huaweicloud-devkit": {
       "command": "npx",
-      "args": ["-y", "-p", "huaweicloud-devkit@next", "huaweicloud-devkit-mcp"]
+      "args": ["-y", "-p", "huaweicloud-devkit", "huaweicloud-devkit-mcp"]
     }
   }
 }

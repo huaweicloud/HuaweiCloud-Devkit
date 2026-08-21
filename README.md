@@ -123,7 +123,7 @@ Any agent that supports MCP can use the standard config:
   "mcpServers": {
     "huaweicloud-devkit": {
       "command": "npx",
-      "args": ["-y", "-p", "huaweicloud-devkit@next", "huaweicloud-devkit-mcp"]
+      "args": ["-y", "-p", "huaweicloud-devkit", "huaweicloud-devkit-mcp"]
     }
   }
 }
