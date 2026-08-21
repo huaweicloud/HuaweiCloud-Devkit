@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readdirSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,6 +8,7 @@ import test from 'node:test';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const setupCli = join(root, 'bin', 'setup.cjs');
+const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 
 function makeEnv(home) {
   return { ...process.env, USERPROFILE: home, HOME: home, HOMEDRIVE: home.slice(0, 2), HOMEPATH: home.slice(2) };
@@ -27,6 +28,12 @@ function countSkills(dir) {
   return readdirSync(dir, { withFileTypes: true }).filter((d) => d.isDirectory() && d.name.startsWith('huawei')).length;
 }
 
+function pluginVersion(pluginsDir) {
+  const p = join(pluginsDir, 'package.json');
+  if (!existsSync(p)) return null;
+  return JSON.parse(readFileSync(p, 'utf8')).version;
+}
+
 test('opencode install creates skills, MCP server, and safety policy', () => {
   const home = mkdtempSync(join(tmpdir(), 'ai-home-'));
   const cwd = mkdtempSync(join(tmpdir(), 'ai-proj-'));
@@ -41,6 +48,7 @@ test('opencode install creates skills, MCP server, and safety policy', () => {
     assert.ok(existsSync(join(pd, 'src', 'tools.mjs')));
     assert.ok(existsSync(join(pd, 'safety', 'policy.json')));
     assert.ok(existsSync(join(pd, '.installed')));
+    assert.equal(pluginVersion(pd), pkg.version);
   } finally {
     rmSync(home, { recursive: true, force: true });
     rmSync(cwd, { recursive: true, force: true });
@@ -102,6 +110,7 @@ test('workbuddy install creates skills, MCP server, and safety policy', () => {
     assert.ok(existsSync(join(pd, 'src', 'mcp-server.mjs')));
     assert.ok(existsSync(join(pd, 'src', 'tools.mjs')));
     assert.ok(existsSync(join(pd, 'safety', 'policy.json')));
+    assert.equal(pluginVersion(pd), pkg.version);
   } finally {
     rmSync(home, { recursive: true, force: true });
     rmSync(cwd, { recursive: true, force: true });
@@ -163,6 +172,7 @@ test('codex-desktop install creates skills, MCP server, and safety policy', () =
     assert.ok(existsSync(join(pd, 'src', 'mcp-server.mjs')));
     assert.ok(existsSync(join(pd, 'src', 'tools.mjs')));
     assert.ok(existsSync(join(pd, 'safety', 'policy.json')));
+    assert.equal(pluginVersion(pd), pkg.version);
   } finally {
     rmSync(home, { recursive: true, force: true });
     rmSync(cwd, { recursive: true, force: true });

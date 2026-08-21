@@ -30,9 +30,15 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const pluginRoot = resolve(__dirname, '..');
 const packageRoot = resolve(pluginRoot, '..', '..');
 let pkgVersion = '0.0.0';
-try {
-  pkgVersion = JSON.parse(readFileSync(join(packageRoot, 'package.json'), 'utf8')).version;
-} catch {}
+for (const base of [pluginRoot, packageRoot]) {
+  try {
+    const version = JSON.parse(readFileSync(join(base, 'package.json'), 'utf8')).version;
+    if (version) {
+      pkgVersion = version;
+      break;
+    }
+  } catch {}
+}
 
 let buffer = Buffer.alloc(0);
 let useContentLengthFraming = true;

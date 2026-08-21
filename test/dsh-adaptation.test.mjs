@@ -8,6 +8,7 @@ import test from 'node:test';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const setupCli = join(root, 'bin', 'setup.cjs');
+const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 
 function makeEnv(home, dshHome) {
   return {
@@ -60,6 +61,11 @@ test('dsh install copies skills, MCP server, safety policy, and patch row', () =
     assert.ok(existsSync(join(pluginDir, 'src', 'tools.mjs')));
     assert.ok(existsSync(join(pluginDir, 'safety', 'policy.json')));
     assert.ok(existsSync(join(pluginDir, '.installed')));
+    assert.equal(
+      JSON.parse(readFileSync(join(pluginDir, 'package.json'), 'utf8')).version,
+      pkg.version,
+      'dsh plugin package.json version matches package',
+    );
 
     const patch = readPatch(dshHome);
     assert.match(patch, /id: mcp-huaweicloud/);
