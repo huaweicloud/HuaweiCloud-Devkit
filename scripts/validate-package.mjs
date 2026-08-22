@@ -42,6 +42,7 @@ const pluginManifests = [
   join(pluginRoot, '.cursor-plugin', 'plugin.json'),
   join(pluginRoot, '.workbuddy-plugin', 'plugin.json'),
   join(pluginRoot, '.hermes-plugin', 'plugin.json'),
+  join(pluginRoot, 'openclaw.plugin.json'),
 ];
 for (const path of pluginManifests) {
   const manifest = readJson(path);
