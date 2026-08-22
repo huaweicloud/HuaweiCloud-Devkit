@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2-next.22 (2026-08-22)
+
+- fix(sandbox): add workspace_id validation and improve connect ID propagation (#251)
+
 ## 1.0.2-next.21 (2026-08-22)
 
 - feat: add ClawHub publish to CI pipeline (#236)
