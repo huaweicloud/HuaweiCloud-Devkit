@@ -14,7 +14,12 @@ const execFileAsync = promisify(execFile);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 export const WS_EXEC_INDEX_URL = pathToFileURL(join(__dirname, '..', 'ws-exec', 'index.js')).href;
 
-const DEFAULT_WORKSPACE_ID = process.env.HW_WORKSPACE_ID || '0107bd9997aa4287bd2b4890b49af07d';
+let currentWorkspaceId = process.env.HW_WORKSPACE_ID || null;
+
+function setWorkspaceId(id) {
+  currentWorkspaceId = id;
+  process.env.HW_WORKSPACE_ID = id;
+}
 
 function resolveEnv() {
   const env = { ...process.env };
@@ -604,4 +609,4 @@ export async function closeAllSessions() {
   }
 }
 
-export { DEFAULT_WORKSPACE_ID, runNodeExec };
+export { currentWorkspaceId, setWorkspaceId, runNodeExec };

@@ -4,6 +4,8 @@ import {
   WS_EXEC_INDEX_URL,
   splitBase64Chunks,
   UPLOAD_CHUNK_SIZE,
+  currentWorkspaceId,
+  setWorkspaceId,
 } from '../plugins/huaweicloud-core/src/sandbox/session-manager.mjs';
 
 test('ws-exec dynamic import uses file:// URL (Windows-safe)', async () => {
@@ -28,4 +30,16 @@ test('splitBase64Chunks returns a single chunk for small inputs', () => {
   const chunks = splitBase64Chunks(base64);
   assert.equal(chunks.length, 1);
   assert.equal(chunks[0], base64);
+});
+
+test('currentWorkspaceId defaults to null without env or setter', () => {
+  assert.equal(currentWorkspaceId, null);
+});
+
+test('setWorkspaceId caches and updates env var', () => {
+  const testId = 'test-workspace-123';
+  setWorkspaceId(testId);
+  assert.equal(currentWorkspaceId, testId);
+  assert.equal(process.env.HW_WORKSPACE_ID, testId);
+  setWorkspaceId(null);
 });

@@ -13,15 +13,35 @@ function readJson(path) {
 
 test('Codex plugin manifest and marketplace are installable', () => {
   const manifest = readJson(join(pluginRoot, '.codex-plugin', 'plugin.json'));
-  assert.equal(manifest.name, 'huaweicloud-core');
+  assert.equal(manifest.name, 'huaweicloud-devkit');
   assert.equal(manifest.skills, './skills/');
   assert.equal(manifest.mcpServers, './.mcp.json');
   assert.ok(!Object.hasOwn(manifest, 'hooks'), 'Codex manifest keeps hooks out');
 
   const marketplace = readJson(join(root, '.agents', 'plugins', 'marketplace.json'));
   assert.equal(marketplace.name, 'huaweicloud-devkit');
-  assert.equal(marketplace.plugins[0].name, 'huaweicloud-core');
+  assert.equal(marketplace.plugins[0].name, 'huaweicloud-devkit');
   assert.equal(marketplace.plugins[0].source.path, './plugins/huaweicloud-core');
+});
+
+test('OpenClaw plugin manifest matches other agent manifests', () => {
+  const openclaw = readJson(join(pluginRoot, 'openclaw.plugin.json'));
+  assert.equal(openclaw.name, 'huaweicloud-devkit');
+  assert.equal(openclaw.family, 'bundle-plugin');
+  assert.equal(openclaw.bundleFormat, 'codex');
+  assert.ok(existsSync(join(pluginRoot, 'openclaw.plugin.json')));
+
+  // All plugin.json names must be consistent
+  const manifests = [
+    join(pluginRoot, '.codex-plugin', 'plugin.json'),
+    join(pluginRoot, '.claude-plugin', 'plugin.json'),
+    join(pluginRoot, '.cursor-plugin', 'plugin.json'),
+    join(pluginRoot, '.workbuddy-plugin', 'plugin.json'),
+    join(pluginRoot, '.hermes-plugin', 'plugin.json'),
+    join(pluginRoot, 'openclaw.plugin.json'),
+  ];
+  const names = new Set(manifests.map((p) => readJson(p).name));
+  assert.equal(names.size, 1, 'All plugin.json name fields must be identical');
 });
 
 test('OpenCode integration exposes skills, commands, and MCP config', () => {
@@ -253,7 +273,7 @@ test('setup-cli.mjs supports the codearts target end to end', () => {
     /const skillsOptions = \[[\s\S]*?opencodeSkillsDir\(\)[\s\S]*?codexDesktopSkillsDir\(\)[\s\S]*?codeartsSkillsDir\(\)[\s\S]*?workbuddySkillsDir\(\)[\s\S]*?dshSkillsDir\(\)[\s\S]*?\];/,
   );
   // help text documents the target
-  assert.match(setup, /--target <opencode\|codex\|codearts\|workbuddy\|dsh\|officeace\|hermes\|all>/);
+  assert.match(setup, /--target <opencode\|codex\|codearts\|workbuddy\|dsh\|officeace\|hermes\|openclaw\|all>/);
   assert.match(setup, /install --target codearts/);
 });
 
@@ -336,7 +356,7 @@ test('setup-cli.mjs supports the dsh target end to end', () => {
   assert.match(setup, /dshPatchConfigured\(\)/);
   assert.match(setup, /dshSkillsDir\(\)/);
   // help text documents the target
-  assert.match(setup, /--target <opencode\|codex\|codearts\|workbuddy\|dsh\|officeace\|hermes\|all>/);
+  assert.match(setup, /--target <opencode\|codex\|codearts\|workbuddy\|dsh\|officeace\|hermes\|openclaw\|all>/);
   assert.match(setup, /install --target dsh/);
 });
 
@@ -348,7 +368,7 @@ test('tools.mjs resolves skills from the dsh directory', () => {
   // stale or empty dirs must not short-circuit the fallback chain
   assert.match(tools, /resolveSkillsRoot[\s\S]*?findSkillsRoot\(\[/);
   assert.match(tools, /\|\|\s*SKILLS_ROOT_DEV/);
-  assert.match(tools, /opencode, codex, codex-desktop, codearts, workbuddy, dsh, officeace, hermes, or all/);
+  assert.match(tools, /opencode, codex, codex-desktop, codearts, workbuddy, dsh, officeace, hermes, openclaw, or all/);
 });
 
 test('tools.mjs resolves skills from the officeace directory', () => {

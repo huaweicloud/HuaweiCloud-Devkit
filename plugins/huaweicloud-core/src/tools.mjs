@@ -14,7 +14,8 @@ import {
   closeSession,
   uploadFileWithSession,
   uploadProjectWithSession,
-  DEFAULT_WORKSPACE_ID,
+  currentWorkspaceId,
+  setWorkspaceId,
 } from './sandbox/session-manager.mjs';
 import { hdkitCheckUser, hdkitSignAgreement, hdkitConnect, hdkitCredentials } from './sandbox/hdkitservice-api.mjs';
 import { getAuthStatus, syncAuth } from './auth/service.mjs';
@@ -424,7 +425,7 @@ export const TOOL_DEFINITIONS = [
         target: {
           type: 'string',
           description:
-            'Agent target to check: opencode, codex, codex-desktop, codearts, workbuddy, dsh, officeace, hermes, or all (default).',
+            'Agent target to check: opencode, codex, codex-desktop, codearts, workbuddy, dsh, officeace, hermes, openclaw, or all (default).',
         },
       },
     },
@@ -664,21 +665,21 @@ export async function callTool(name, args = {}) {
       setRuntimeCredentials(args.ak, args.sk, undefined, args.region);
       return { status: 'ok', message: 'Runtime credentials set for this MCP session.' };
     case 'huaweicloud_sandbox_exec_with_session': {
-      const sandboxWsId2 = args.workspace_id || DEFAULT_WORKSPACE_ID;
+      const sandboxWsId2 = args.workspace_id || currentWorkspaceId;
       const sandboxUser2 = args.username || 'root';
       const sandboxTimeout2 = args.timeout_ms || 120000;
       const sandboxResult2 = await execWithSession(sandboxWsId2, args.command, sandboxUser2, sandboxTimeout2);
       return { stdout: sandboxResult2.stdout, exitCode: sandboxResult2.exitCode };
     }
     case 'huaweicloud_sandbox_exec_one_shot': {
-      const sandboxWsId3 = args.workspace_id || DEFAULT_WORKSPACE_ID;
+      const sandboxWsId3 = args.workspace_id || currentWorkspaceId;
       const sandboxUser3 = args.username || 'root';
       const sandboxTimeout3 = args.timeout_ms || 120000;
       const sandboxResult3 = await execOneShot(sandboxWsId3, args.command, sandboxUser3, sandboxTimeout3);
       return { stdout: sandboxResult3.stdout, exitCode: sandboxResult3.exitCode };
     }
     case 'huaweicloud_sandbox_close_session': {
-      const sandboxWsId4 = args.workspace_id || DEFAULT_WORKSPACE_ID;
+      const sandboxWsId4 = args.workspace_id || currentWorkspaceId;
       const sandboxUser4 = args.username || 'root';
       const closed = await closeSession(sandboxWsId4, sandboxUser4);
       return closed ? 'ok' : 'not_connected';
@@ -687,7 +688,7 @@ export async function callTool(name, args = {}) {
       if (!args.local_path || !args.remote_path) {
         throw new Error('local_path and remote_path are required.');
       }
-      const sandboxWsId5 = args.workspace_id || DEFAULT_WORKSPACE_ID;
+      const sandboxWsId5 = args.workspace_id || currentWorkspaceId;
       const sandboxUser5 = args.username || 'root';
       const sandboxTimeout5 = args.timeout_ms || 120000;
       return await uploadFileWithSession(
@@ -702,7 +703,7 @@ export async function callTool(name, args = {}) {
       if (!args.local_dir) {
         throw new Error('local_dir is required.');
       }
-      const sandboxWsId6 = args.workspace_id || DEFAULT_WORKSPACE_ID;
+      const sandboxWsId6 = args.workspace_id || currentWorkspaceId;
       const sandboxUser6 = args.username || 'root';
       const sandboxTimeout6 = args.timeout_ms || 120000;
       return await uploadProjectWithSession(
@@ -721,8 +722,13 @@ export async function callTool(name, args = {}) {
       return await hdkitCheckUser();
     case 'huaweicloud_sandbox_sign_agreement':
       return await hdkitSignAgreement();
-    case 'huaweicloud_sandbox_connect':
-      return await hdkitConnect(args);
+    case 'huaweicloud_sandbox_connect': {
+      const connectResult = await hdkitConnect(args);
+      if (connectResult?.dev_stage_id) {
+        setWorkspaceId(connectResult.dev_stage_id);
+      }
+      return connectResult;
+    }
     case 'huaweicloud_sandbox_credentials':
       return await hdkitCredentials(args.session_id, args.dev_stage_id, args.enable_sts !== false);
     default:

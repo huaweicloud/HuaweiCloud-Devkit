@@ -44,6 +44,13 @@ const pluginRoot = 'plugins/huaweicloud-core';
   writeJson(p, m);
 });
 
+{
+  const p = join(pluginRoot, 'openclaw.plugin.json');
+  const m = readJson(p);
+  m.version = version;
+  writeJson(p, m);
+}
+
 let commits;
 try {
   commits = execSync(`git log "v${previousVersion}"..HEAD --no-merges --format="- %s"`, {
@@ -82,6 +89,7 @@ const changedFiles = [
   `${pluginRoot}/.cursor-plugin/plugin.json`,
   `${pluginRoot}/.workbuddy-plugin/plugin.json`,
   `${pluginRoot}/.hermes-plugin/plugin.json`,
+  `${pluginRoot}/openclaw.plugin.json`,
 ];
 execSync(`npx prettier --write ${changedFiles.join(' ')}`, { cwd: root, stdio: 'inherit' });
 
@@ -94,6 +102,7 @@ run(`git add ${pluginRoot}/.claude-plugin/plugin.json`);
 run(`git add ${pluginRoot}/.cursor-plugin/plugin.json`);
 run(`git add ${pluginRoot}/.workbuddy-plugin/plugin.json`);
 run(`git add ${pluginRoot}/.hermes-plugin/plugin.json`);
+run(`git add ${pluginRoot}/openclaw.plugin.json`);
 try {
   run('git add .version-override');
 } catch {
