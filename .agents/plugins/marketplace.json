@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "huaweicloud-core",
+      "name": "huaweicloud-devkit",
       "source": {
         "source": "local",
         "path": "./plugins/huaweicloud-core"

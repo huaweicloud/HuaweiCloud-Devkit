@@ -13,14 +13,14 @@ function readJson(path) {
 
 test('Codex plugin manifest and marketplace are installable', () => {
   const manifest = readJson(join(pluginRoot, '.codex-plugin', 'plugin.json'));
-  assert.equal(manifest.name, 'huaweicloud-core');
+  assert.equal(manifest.name, 'huaweicloud-devkit');
   assert.equal(manifest.skills, './skills/');
   assert.equal(manifest.mcpServers, './.mcp.json');
   assert.ok(!Object.hasOwn(manifest, 'hooks'), 'Codex manifest keeps hooks out');
 
   const marketplace = readJson(join(root, '.agents', 'plugins', 'marketplace.json'));
   assert.equal(marketplace.name, 'huaweicloud-devkit');
-  assert.equal(marketplace.plugins[0].name, 'huaweicloud-core');
+  assert.equal(marketplace.plugins[0].name, 'huaweicloud-devkit');
   assert.equal(marketplace.plugins[0].source.path, './plugins/huaweicloud-core');
 });
 
