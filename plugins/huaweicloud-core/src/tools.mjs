@@ -722,12 +722,13 @@ export async function callTool(name, args = {}) {
       return await hdkitCheckUser();
     case 'huaweicloud_sandbox_sign_agreement':
       return await hdkitSignAgreement();
-    case 'huaweicloud_sandbox_connect':
+    case 'huaweicloud_sandbox_connect': {
       const connectResult = await hdkitConnect(args);
       if (connectResult?.dev_stage_id) {
         setWorkspaceId(connectResult.dev_stage_id);
       }
       return connectResult;
+    }
     case 'huaweicloud_sandbox_credentials':
       return await hdkitCredentials(args.session_id, args.dev_stage_id, args.enable_sts !== false);
     default:
