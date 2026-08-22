@@ -273,7 +273,7 @@ test('setup-cli.mjs supports the codearts target end to end', () => {
     /const skillsOptions = \[[\s\S]*?opencodeSkillsDir\(\)[\s\S]*?codexDesktopSkillsDir\(\)[\s\S]*?codeartsSkillsDir\(\)[\s\S]*?workbuddySkillsDir\(\)[\s\S]*?dshSkillsDir\(\)[\s\S]*?\];/,
   );
   // help text documents the target
-  assert.match(setup, /--target <opencode\|codex\|codearts\|workbuddy\|dsh\|officeace\|hermes\|all>/);
+  assert.match(setup, /--target <opencode\|codex\|codearts\|workbuddy\|dsh\|officeace\|hermes\|openclaw\|all>/);
   assert.match(setup, /install --target codearts/);
 });
 
@@ -356,7 +356,7 @@ test('setup-cli.mjs supports the dsh target end to end', () => {
   assert.match(setup, /dshPatchConfigured\(\)/);
   assert.match(setup, /dshSkillsDir\(\)/);
   // help text documents the target
-  assert.match(setup, /--target <opencode\|codex\|codearts\|workbuddy\|dsh\|officeace\|hermes\|all>/);
+  assert.match(setup, /--target <opencode\|codex\|codearts\|workbuddy\|dsh\|officeace\|hermes\|openclaw\|all>/);
   assert.match(setup, /install --target dsh/);
 });
 
@@ -368,7 +368,7 @@ test('tools.mjs resolves skills from the dsh directory', () => {
   // stale or empty dirs must not short-circuit the fallback chain
   assert.match(tools, /resolveSkillsRoot[\s\S]*?findSkillsRoot\(\[/);
   assert.match(tools, /\|\|\s*SKILLS_ROOT_DEV/);
-  assert.match(tools, /opencode, codex, codex-desktop, codearts, workbuddy, dsh, officeace, hermes, or all/);
+  assert.match(tools, /opencode, codex, codex-desktop, codearts, workbuddy, dsh, officeace, hermes, openclaw, or all/);
 });
 
 test('tools.mjs resolves skills from the officeace directory', () => {
