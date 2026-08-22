@@ -72,7 +72,7 @@ jobs:
     needs: publish
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    environment: npm-publish
+    environment: clawhub-publish
     if: ${{ vars.CLAWHUB_ENABLED == 'true' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
