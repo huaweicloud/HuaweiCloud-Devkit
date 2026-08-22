@@ -24,6 +24,26 @@ test('Codex plugin manifest and marketplace are installable', () => {
   assert.equal(marketplace.plugins[0].source.path, './plugins/huaweicloud-core');
 });
 
+test('OpenClaw plugin manifest matches other agent manifests', () => {
+  const openclaw = readJson(join(pluginRoot, 'openclaw.plugin.json'));
+  assert.equal(openclaw.name, 'huaweicloud-devkit');
+  assert.equal(openclaw.family, 'bundle-plugin');
+  assert.equal(openclaw.bundleFormat, 'codex');
+  assert.ok(existsSync(join(pluginRoot, 'openclaw.plugin.json')));
+
+  // All plugin.json names must be consistent
+  const manifests = [
+    join(pluginRoot, '.codex-plugin', 'plugin.json'),
+    join(pluginRoot, '.claude-plugin', 'plugin.json'),
+    join(pluginRoot, '.cursor-plugin', 'plugin.json'),
+    join(pluginRoot, '.workbuddy-plugin', 'plugin.json'),
+    join(pluginRoot, '.hermes-plugin', 'plugin.json'),
+    join(pluginRoot, 'openclaw.plugin.json'),
+  ];
+  const names = new Set(manifests.map((p) => readJson(p).name));
+  assert.equal(names.size, 1, 'All plugin.json name fields must be identical');
+});
+
 test('OpenCode integration exposes skills, commands, and MCP config', () => {
   assert.ok(existsSync(join(root, 'integrations', 'opencode', 'opencode.json')));
   assert.ok(existsSync(join(root, 'integrations', 'opencode', 'commands', 'huaweicloud-doctor.md')));
