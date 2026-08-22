@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2-next.23 (2026-08-22)
+
+- docs: restore ClawHub-first install method for OpenClaw section (#253)
+- fix: use separate clawhub-publish environment for ClawHub job (#249)
+
 ## 1.0.2-next.22 (2026-08-22)
 
 - fix(sandbox): add workspace_id validation and improve connect ID propagation (#251)
