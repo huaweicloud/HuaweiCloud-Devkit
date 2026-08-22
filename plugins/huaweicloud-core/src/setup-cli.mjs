@@ -3046,7 +3046,7 @@ async function main() {
     default:
       console.log(BANNER);
       console.log(
-        'Usage: npx huaweicloud-devkit <command> [--target <opencode|codex|codearts|workbuddy|dsh|officeace|hermes|all>]\n',
+        'Usage: npx huaweicloud-devkit <command> [--target <opencode|codex|codearts|workbuddy|dsh|officeace|hermes|openclaw|all>]\n',
       );
       console.log('Commands:');
       console.log('  install      Install skills, MCP server, safety policy');
@@ -3061,7 +3061,7 @@ async function main() {
       console.log('  help         Show this help');
       console.log('\nOptions:');
       console.log(
-        '  --target     Target agent: opencode (default), codex, codearts, workbuddy, dsh, officeace, hermes, all',
+        '  --target     Target agent: opencode (default), codex, codearts, workbuddy, dsh, officeace, hermes, openclaw, all',
       );
       console.log('\nExamples:');
       console.log('  npx huaweicloud-devkit install');

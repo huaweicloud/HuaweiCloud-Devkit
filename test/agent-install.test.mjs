@@ -255,7 +255,7 @@ test('hermes install creates skills, MCP server, and safety policy', () => {
   try {
     const res = run('hermes', home, cwd, 'install');
     assert.equal(res.status, 0, res.stderr);
-    assert.match(res.stdout, /\[Hermes\]/);
+    assert.match(res.stdout, /\[Hermes Agent\]/);
     assert.match(res.stdout, /Installation complete/);
     assert.ok(countSkills(join(home, '.hermes', 'skills')) >= 6);
     const pd = join(home, '.hermes', 'huaweicloud-plugins');
