@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2-next.21 (2026-08-22)
+
+- feat: add ClawHub publish to CI pipeline (#236)
+- fix: OpenClaw plugin issues - workspace cache, version sync, name unification (#243)
+- feat: add OpenClaw agent target support (#229)
+
 ## 1.0.2-next.20 (2026-08-21)
 
 - fix: resolve merge conflicts - remove extra braces from clash with hermes
