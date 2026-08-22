@@ -110,6 +110,8 @@ openclaw plugins install clawhub:huaweicloud-devkit
 ```bash
 # 或通过 npx
 npx --yes huaweicloud-devkit install --target openclaw
+npx --yes huaweicloud-devkit status --target openclaw
+npx --yes huaweicloud-devkit update --target openclaw
 npx --yes huaweicloud-devkit uninstall --target openclaw
 rm -rf ~/.npm/_npx/  # 仅 Linux/macOS；Windows 路径待确认
 ```
