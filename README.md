@@ -101,15 +101,15 @@ npx --yes huaweicloud-devkit uninstall --target officeace
 ### OpenClaw
 
 ```bash
-# 推荐方式 (ClawHub)
-openclaw plugins install clawhub:huaweicloud-devkit
+npx --yes huaweicloud-devkit install --target openclaw
 ```
 
 **Restart OpenClaw** after installation.
 
 ```bash
-# 或通过 npx
-npx --yes huaweicloud-devkit install --target openclaw
+npx --yes huaweicloud-devkit doctor --target openclaw
+npx --yes huaweicloud-devkit status --target openclaw
+npx --yes huaweicloud-devkit update --target openclaw
 npx --yes huaweicloud-devkit uninstall --target openclaw
 rm -rf ~/.npm/_npx/  # Linux/macOS only; Windows path TBD
 ```
