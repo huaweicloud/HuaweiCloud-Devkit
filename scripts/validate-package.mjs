@@ -24,7 +24,7 @@ assertExists(join(pluginRoot, 'safety', 'rules', 'cloud-risk-rules.json'));
 assertExists(join(root, 'integrations', 'opencode', 'opencode.json'));
 
 const manifest = readJson(join(pluginRoot, '.codex-plugin', 'plugin.json'));
-assert.equal(manifest.name, 'huaweicloud-core');
+assert.equal(manifest.name, 'huaweicloud-devkit');
 assert.equal(manifest.skills, './skills/');
 assert.equal(manifest.mcpServers, './.mcp.json');
 assert.ok(!Object.hasOwn(manifest, 'hooks'), 'Codex manifest should not include hooks until supported by validator');

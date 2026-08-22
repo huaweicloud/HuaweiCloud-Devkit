@@ -23,7 +23,7 @@
     "url": "https://github.com/huaweicloud"
   },
   "hooks": "./hooks/",
-  "name": "huaweicloud-core",
+  "name": "huaweicloud-devkit",
   "homepage": "https://github.com/huaweicloud/HuaweiCloud-Devkit",
   "repository": "https://github.com/huaweicloud/HuaweiCloud-Devkit",
   "license": "Apache-2.0",
